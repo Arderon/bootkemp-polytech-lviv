@@ -89,11 +89,11 @@
         <button class="tab-btn" onclick="switchTab('vstup')">Мої заяви (Вступ)</button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 md:p-8">
-        <div class="max-w-7xl mx-auto">
+      <div class="flex-1 overflow-hidden">
 
           <!-- ВКЛАДКА 1: ПРОФІЛЬ -->
-          <div id="tab-profile" class="tab-content active">
+          <div id="tab-profile" class="tab-content active h-full overflow-y-auto p-4 md:p-8">
+            <div class="max-w-7xl mx-auto">
             <h2 class="text-2xl font-bold text-edboPrimary mb-4 m-0">Верифіковані дані вступника</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <!-- Особа -->
@@ -115,11 +115,6 @@
               </div>
               <!-- Довідки -->
               <div class="mui-paper p-5 flex flex-col gap-4">
-                <div class="relative p-3 bg-blue-50 rounded border border-blue-100">
-                  <div class="absolute top-0 right-0 bg-blue-400 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">HELSI</div>
-                  <div class="text-xs text-gray-500">Мед. довідка 086/о</div>
-                  <div class="mt-2"><span class="badge badge-success text-[10px]">✓ ЕСОЗ Трембіта</span></div>
-                </div>
                 <div class="relative p-3 bg-green-50 rounded border border-green-100">
                   <div class="absolute top-0 right-0 bg-green-700 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ОБЕРІГ</div>
                   <div class="text-xs text-gray-500">Військовий облік</div>
@@ -127,10 +122,51 @@
                 </div>
               </div>
             </div>
+
+            <h2 class="text-2xl font-bold text-edboPrimary mb-4 mt-8 m-0">Документи вступника</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Фото -->
+              <div class="mui-paper p-5 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ДІЯ</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">Фото</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">Фотокартка вступника</div><div class="font-bold text-lg">Завантажено</div></div>
+                <div class="mt-4"><span class="badge badge-success">✓ Підтверджено</span></div>
+              </div>
+              <!-- Витяг з реєстру територіальної громади -->
+              <div class="mui-paper p-5 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ДІЯ</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">Витяг з реєстру територіальної громади</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">Місце проживання</div><div class="font-bold text-lg">Актуальний витяг</div></div>
+                <div class="mt-4"><span class="badge badge-success">✓ Знайдено в реєстрі</span></div>
+              </div>
+              <!-- РНОКПП -->
+              <div class="mui-paper p-5 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ДІЯ</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">РНОКПП</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">Реєстраційний номер облікової картки платника податків</div><div class="font-bold text-lg">•• •••• ••••</div></div>
+                <div class="mt-4"><span class="badge badge-success">✓ Підтверджено</span></div>
+              </div>
+              <!-- Документ про освіту -->
+              <div class="mui-paper p-5 relative overflow-hidden border-l-4 border-blue-500">
+                <div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ЄДЕБО</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">Документ про освіту</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">Атестат про повну загальну середню освіту</div><div class="font-bold text-lg">Серія та номер підтверджені</div></div>
+                <div class="mt-4"><span class="badge badge-success">✓ Знайдено в реєстрі</span></div>
+              </div>
+              <!-- Документ, що дає право на пільги -->
+              <div class="mui-paper p-5 relative overflow-hidden border-l-4 border-purple-500">
+                <div class="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">МСП</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">Документ, що дає право на пільги</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">Статус учасника/дитини учасника бойових дій</div><div class="font-bold text-lg">Дані з реєстру пільгових категорій</div></div>
+                <div class="mt-4"><span class="badge badge-success">✓ Знайдено в реєстрі</span></div>
+              </div>
+            </div>
+            </div>
           </div>
 
           <!-- ВКЛАДКА: ВИБІР СПЕЦІАЛЬНОСТІ -->
-          <div id="tab-specialty-choice" class="tab-content">
+          <div id="tab-specialty-choice" class="tab-content h-full overflow-y-auto p-4 md:p-8">
+            <div class="max-w-7xl mx-auto">
             <h2 class="text-2xl font-bold text-edboPrimary mb-1 m-0">Вибір спеціальності</h2>
             <p class="text-sm text-gray-500 mb-4 mt-1">Загальна статистика по спеціальностях: конкурс, прохідні бали та ринок праці випускників за даними ПФУ і ДЦЗ</p>
 
@@ -154,10 +190,12 @@
             </div>
 
             <div id="specialty-choice-container" class="space-y-4"></div>
+            </div>
           </div>
 
           <!-- ВКЛАДКА 2: ПОШУК -->
-          <div id="tab-analytics" class="tab-content">
+          <div id="tab-analytics" class="tab-content h-full overflow-y-auto p-4 md:p-8">
+            <div class="max-w-7xl mx-auto">
             <h2 class="text-2xl font-bold text-edboPrimary mb-4 m-0">Пошук пропозицій</h2>
 
             <!-- Фільтри -->
@@ -188,17 +226,19 @@
 
             <!-- Результати -->
             <div id="analytics-container" class="space-y-4"></div>
+            </div>
           </div>
 
           <!-- ВКЛАДКА 3: МОЇ ЗАЯВИ -->
-          <div id="tab-vstup" class="tab-content">
+          <div id="tab-vstup" class="tab-content h-full overflow-y-auto p-4 md:p-8">
+            <div class="max-w-7xl mx-auto">
             <h2 class="text-2xl font-bold text-edboPrimary mb-4 m-0">Подані заяви</h2>
             <div id="my-apps-container" class="space-y-4">
               <div class="text-center py-10 text-gray-500 bg-white rounded border">У вас ще немає поданих заяв</div>
             </div>
+            </div>
           </div>
 
-        </div>
       </div>
     </div>
   </div>
@@ -219,7 +259,6 @@
         <ul class="space-y-2 text-sm text-gray-600 border border-gray-200 p-4 rounded bg-gray-50 mb-6 m-0">
           <li>✓ Копія паспорта та ІПН (Дія)</li>
           <li>✓ Свідоцтво про освіту (ЄДЕБО)</li>
-          <li>✓ Медогляд 086/о (ЕСОЗ Helsi)</li>
           <li>✓ Військовий квиток (Оберіг)</li>
         </ul>
         <div class="flex justify-end gap-4">
@@ -230,7 +269,26 @@
     </div>
   </div>
 
+  <!-- МОДАЛЬНЕ ВІКНО-СПОВІЩЕННЯ -->
+  <div id="modal-notice" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg w-full max-w-md overflow-hidden shadow-2xl flex flex-col">
+      <div class="bg-edboPrimary text-white px-6 py-4 flex justify-between items-center">
+        <h3 class="font-bold text-lg m-0" id="notice-title">Повідомлення</h3>
+        <button class="text-white hover:text-gray-300 font-bold bg-transparent border-none cursor-pointer" onclick="closeNotice()">✕</button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-start gap-3 mb-6">
+          <span class="badge badge-success !rounded-full !p-2 shrink-0">✓</span>
+          <p class="text-sm text-gray-700 m-0" id="notice-message" style="white-space: pre-line;"></p>
+        </div>
+        <div class="flex justify-end">
+          <button class="mui-btn mui-btn-primary" onclick="closeNotice()">Зрозуміло</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </body>
-</html>Вибір 
+</html>

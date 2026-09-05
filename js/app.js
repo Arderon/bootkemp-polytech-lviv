@@ -13,8 +13,6 @@ function startLogin() {
     "✅ Особу встановлено",
     "Синхронізація з ЄДБО (документи, НМТ)...",
     "✅ Знайдено Свідоцтво та сертифікат НМТ",
-    "Запит до ЕСОЗ Helsi...",
-    "✅ Довідка 086/о дійсна",
     "Перевірка в реєстрі Оберіг...",
     "✅ Військово-обліковий документ дійсний"
   ];
@@ -453,7 +451,7 @@ function apply(offerId) {
   renderMyApps();
 
   switchTab('vstup');
-  alert(`Заяву успішно подано!\n\nВи одразу пройшли верифікацію завдяки Дії. Паперові копії документів везти до приймальної комісії не потрібно.`);
+  showNotice('Ви одразу пройшли верифікацію завдяки Дії. Паперові копії документів везти до приймальної комісії не потрібно.', 'Заяву успішно подано!');
 }
 
 function renderMyApps() {
@@ -477,6 +475,16 @@ function renderMyApps() {
   });
 }
 
+function showNotice(message, title = 'Повідомлення') {
+  document.getElementById('notice-title').innerText = title;
+  document.getElementById('notice-message').innerText = message;
+  document.getElementById('modal-notice').style.display = 'flex';
+}
+
+function closeNotice() {
+  document.getElementById('modal-notice').style.display = 'none';
+}
+
 function openModal(id) {
   selectedAppForSign = id;
   const app = myApplications.find(a => a.id === id);
@@ -490,8 +498,8 @@ function closeModal() {
 }
 
 function confirmSign() {
-  alert("Договір успішно підписано Дія.Підписом!\n\nВи офіційно зараховані. Дані передано в університет.");
   closeModal();
+  showNotice('Ви офіційно зараховані. Дані передано в університет.', 'Договір успішно підписано Дія.Підписом!');
 
   const container = document.getElementById('my-apps-container');
   container.innerHTML = container.innerHTML.replace(
