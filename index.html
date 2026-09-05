@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЄДЕБО | Кабінет вступника 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          edboPrimary: '#011D63',
+          edboDark: '#001547',
+          edboLight: '#2785FF',
+          edboBg: '#f5f5f5',
+          diia: '#000000',
+        },
+        fontFamily: {
+          sans: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { background-color: #f5f5f5; color: #212121; }
+  .mui-paper { background: #ffffff; border-radius: 8px; box-shadow: 0px 2px 8px rgba(0,0,0,0.08); border: 1px solid #e0e0e0; }
+  .mui-input { border: 1px solid #c4c4c4; border-radius: 4px; padding: 10px 14px; width: 100%; outline: none; transition: border 0.2s; font-size: 0.9rem;}
+  .mui-input:focus { border-color: #2785FF; box-shadow: 0 0 0 1px #2785FF; }
+  .mui-input:disabled { background-color: #f5f5f5; cursor: not-allowed; }
+  .mui-btn { padding: 10px 24px; border-radius: 4px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; border: none;}
+  .mui-btn-primary { background: #011D63; color: #fff; }
+  .mui-btn-primary:hover { background: #001547; }
+  .mui-btn:disabled { background: #bdbdbd; cursor: not-allowed; color: #fff; }
+  .mui-btn-outline { background: transparent; color: #011D63; border: 1px solid #011D63; }
+  .mui-btn-outline:hover { background: rgba(1, 29, 99, 0.05); }
+  .diia-btn { background: #000; color: #fff; border-radius: 50px; font-weight: bold; font-size: 1.1rem; padding: 16px 32px; display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center; text-transform: none; }
+  .diia-btn:hover { background: #1a1a1a; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; }
+  .badge-success { background: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+
+  .tab-btn { padding: 14px 24px; font-weight: 600; color: #757575; border-bottom: 3px solid transparent; cursor: pointer; transition: 0.2s; white-space: nowrap; background: none; }
+  .tab-btn.active { color: #011D63; border-bottom-color: #2785FF; }
+  .tab-content { display: none; animation: fadeIn 0.3s; }
+  .tab-content.active { display: block; }
+  
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  .loader-text { font-size: 1.1rem; color: #011D63; font-weight: 600; margin-top: 20px; }
+  .spinner { border: 4px solid rgba(1, 29, 99, 0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: #011D63; animation: spin 1s linear infinite; margin: 0 auto; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* Акордеон для ієрархії */
+  .accordion-header { cursor: pointer; transition: background 0.2s; }
+  .accordion-header:hover { background: #f8fbff; }
+  .hidden-block { display: none !important; }
+</style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+  <!-- ЕКРАН 1: АВТОРИЗАЦІЯ -->
+  <div id="login-screen" class="flex-1 flex flex-col h-full bg-white z-50 absolute inset-0 overflow-y-auto">
+    <header class="bg-edboPrimary text-white py-4 px-8 shadow-md flex justify-between items-center shrink-0">
+      <div>
+        <h1 class="text-xl font-bold m-0">ВСТУП 2026</h1>
+        <p class="text-xs text-blue-200 m-0">Особистий електронний кабінет вступника</p>
+      </div>
+      <div class="text-sm font-semibold opacity-80">Технічна підтримка: (044) 290-18-13</div>
+    </header>
+
+    <div class="flex-1 flex items-center justify-center p-6">
+      <div class="mui-paper w-full max-w-lg p-10 text-center relative overflow-hidden">
+        <div id="login-form">
+          <div class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-md mb-8 text-sm text-left">
+            <h3 class="font-bold flex items-center gap-2 mb-2 m-0">Оновлення 2026 року</h3>
+            <p class="m-0">Вхід за логіном та паролем, а також ручне введення дипломів та медичних довідок <b>відключено</b>. Авторизація здійснюється виключно через Дія.Підпис. Усі дані підтягнуться автоматично.</p>
+          </div>
+          <h2 class="text-2xl font-bold text-edboPrimary mb-6 m-0">Швидкий вхід у кабінет</h2>
+          <button class="diia-btn mui-btn" onclick="startLogin()">
+            <span class="bg-white text-black px-2 py-1 rounded text-xs font-black uppercase tracking-wider">Дія</span>
+            Увійти через Дія.Підпис
+          </button>
+        </div>
+
+        <div id="login-loading" class="hidden py-8">
+          <div class="spinner"></div>
+          <div id="loading-step" class="loader-text">З'єднання з Дія...</div>
+          <div class="text-sm text-gray-500 mt-4 text-left bg-gray-50 p-4 rounded border">
+            <ul id="loading-log" class="space-y-2 m-0 pl-0 list-none"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЕКРАН 2: КАБІНЕТ -->
+  <div id="cabinet-screen" class="hidden flex-1 flex flex-col h-full bg-edboBg">
+    <header class="bg-edboPrimary text-white shadow-md flex justify-between items-center px-6 py-3 shrink-0 z-20 relative">
+      <div class="flex items-center gap-4">
+        <div class="bg-white text-edboPrimary font-bold text-xl px-3 py-1 rounded">ЄДЕБО</div>
+        <div class="hidden sm:block border-l border-blue-400 pl-4">
+          <h1 class="text-lg font-medium m-0">Державна база з питань освіти</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="text-right hidden md:block">
+          <div class="font-bold text-sm">Коваленко Олександр Сергійович</div>
+          <div class="text-xs text-green-400 flex items-center justify-end gap-1">Верифіковано</div>
+        </div>
+        <button class="mui-btn mui-btn-outline" style="color:white; border-color:white;" onclick="logout()">Вийти</button>
+      </div>
+    </header>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <div class="bg-white px-6 shadow-sm shrink-0 flex overflow-x-auto border-b border-gray-200">
+        <button class="tab-btn active" onclick="switchTab('profile')">Мій цифровий профіль</button>
+        <button class="tab-btn" onclick="switchTab('specialty-choice')">Вибір спеціальності</button>
+        <button class="tab-btn" onclick="switchTab('analytics')">Пошук та Аналітика</button>
+        <button class="tab-btn" onclick="switchTab('vstup')">Мої заяви (Вступ)</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 md:p-8">
+        <div class="max-w-7xl mx-auto">
+
+          <!-- ВКЛАДКА 1: ПРОФІЛЬ -->
+          <div id="tab-profile" class="tab-content active">
+            <h2 class="text-2xl font-bold text-edboPrimary mb-4 m-0">Верифіковані дані вступника</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Особа -->
+              <div class="mui-paper p-5 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ДІЯ</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">Особа</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">ПІБ</div><div class="font-bold text-lg">Коваленко О. С.</div></div>
+                <div class="mt-4"><span class="badge badge-success">✓ Підтверджено</span></div>
+              </div>
+              <!-- Освіта -->
+              <div class="mui-paper p-5 relative overflow-hidden border-l-4 border-blue-500">
+                <div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ЄДЕБО</div>
+                <h3 class="text-sm text-gray-500 mb-4 uppercase tracking-wider font-bold m-0">Освіта</h3>
+                <div class="mb-3"><div class="text-xs text-gray-400">Сертифікат НМТ</div>
+                  <div class="text-sm font-semibold">Укр.мова: 185 | Математ: 190 | Історія: 178</div>
+                  <div class="text-xs mt-1 font-bold text-green-600">Ваш середній конкурсний бал: 186.4</div>
+                </div>
+                <div class="mt-4"><span class="badge badge-success">✓ Знайдено в реєстрі</span></div>
+              </div>
+              <!-- Довідки -->
+              <div class="mui-paper p-5 flex flex-col gap-4">
+                <div class="relative p-3 bg-blue-50 rounded border border-blue-100">
+                  <div class="absolute top-0 right-0 bg-blue-400 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">HELSI</div>
+                  <div class="text-xs text-gray-500">Мед. довідка 086/о</div>
+                  <div class="mt-2"><span class="badge badge-success text-[10px]">✓ ЕСОЗ Трембіта</span></div>
+                </div>
+                <div class="relative p-3 bg-green-50 rounded border border-green-100">
+                  <div class="absolute top-0 right-0 bg-green-700 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">ОБЕРІГ</div>
+                  <div class="text-xs text-gray-500">Військовий облік</div>
+                  <div class="mt-2"><span class="badge badge-success text-[10px]">✓ Призовник (Дійсний)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ВКЛАДКА: ВИБІР СПЕЦІАЛЬНОСТІ -->
+          <div id="tab-specialty-choice" class="tab-content">
+            <h2 class="text-2xl font-bold text-edboPrimary mb-1 m-0">Вибір спеціальності</h2>
+            <p class="text-sm text-gray-500 mb-6 mt-1">Загальна статистика по спеціальностях: конкурс, прохідні бали та ринок праці випускників за даними ПФУ і ДЦЗ</p>
+            <div id="specialty-choice-container" class="space-y-4"></div>
+          </div>
+
+          <!-- ВКЛАДКА 2: АНАЛІТИКА ТА ПОШУК -->
+          <div id="tab-analytics" class="tab-content">
+            <div class="flex justify-between items-end mb-4">
+              <h2 class="text-2xl font-bold text-edboPrimary m-0">Аналітика та вибір спеціальності</h2>
+              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-gray-300 shadow-sm hover:bg-gray-50">
+                <input type="checkbox" id="mode-view" onchange="renderAnalytics()">
+                <span class="text-sm font-bold text-gray-800">Режим огляду (без результатів НМТ)</span>
+              </label>
+            </div>
+
+            <!-- Фільтри -->
+            <div class="mui-paper p-5 mb-6 bg-gray-50">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1 font-bold">Регіон</label>
+                  <select id="flt-region" class="mui-input" onchange="updateFilters()"><option value="all">Вся Україна</option></select>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1 font-bold">Університет</label>
+                  <select id="flt-uni" class="mui-input" onchange="renderAnalytics()"><option value="all">Всі університети</option></select>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1 font-bold">Галузь знань (Сфера)</label>
+                  <select id="flt-sphere" class="mui-input" onchange="renderAnalytics()"><option value="all">Всі сфери</option></select>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1 font-bold">Сортування</label>
+                  <select id="flt-sort" class="mui-input" onchange="renderAnalytics()">
+                    <option value="budgetAsc">Мін. бал Бюджет (зростання)</option>
+                    <option value="budgetDesc">Мін. бал Бюджет (спадання)</option>
+                    <option value="contractAsc">Мін. бал Контракт (зростання)</option>
+                    <option value="salaryDesc">Середня ЗП (спадання)</option>
+                    <option value="empDesc">Рівень працевлаштування (спадання)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Результати -->
+            <div id="analytics-container" class="space-y-4"></div>
+          </div>
+
+          <!-- ВКЛАДКА 3: МОЇ ЗАЯВИ -->
+          <div id="tab-vstup" class="tab-content">
+            <h2 class="text-2xl font-bold text-edboPrimary mb-4 m-0">Подані заяви</h2>
+            <div id="my-apps-container" class="space-y-4">
+              <div class="text-center py-10 text-gray-500 bg-white rounded border">У вас ще немає поданих заяв</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНЕ ВІКНО ПІДПИСАННЯ -->
+  <div id="modal-sign" class="fixed inset-0 bg-black bg-opacity-50 z-[100] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
+      <div class="bg-edboPrimary text-white px-6 py-4 flex justify-between items-center">
+        <h3 class="font-bold text-lg m-0">Електронне зарахування</h3>
+        <button class="text-white hover:text-gray-300 font-bold bg-transparent border-none cursor-pointer" onclick="closeModal()">✕</button>
+      </div>
+      <div class="p-6">
+        <div class="bg-green-50 border border-green-200 p-4 rounded mb-6">
+          <h4 class="font-bold text-green-800 text-lg m-0 mb-1">Статус: Рекомендовано до зарахування</h4>
+          <p class="text-sm text-green-700 m-0" id="modal-app-details"></p>
+        </div>
+        <p class="text-sm text-gray-800 mb-4 font-bold">Ваша електронна особова справа сформована автоматично. Фізична подача документів не вимагається.</p>
+        <ul class="space-y-2 text-sm text-gray-600 border border-gray-200 p-4 rounded bg-gray-50 mb-6 m-0">
+          <li>✓ Копія паспорта та ІПН (Дія)</li>
+          <li>✓ Свідоцтво про освіту (ЄДЕБО)</li>
+          <li>✓ Медогляд 086/о (ЕСОЗ Helsi)</li>
+          <li>✓ Військовий квиток (Оберіг)</li>
+        </ul>
+        <div class="flex justify-end gap-4">
+          <button class="mui-btn mui-btn-outline" onclick="closeModal()">Скасувати</button>
+          <button class="mui-btn diia-btn !w-auto !py-2 !px-6 !text-sm" onclick="confirmSign()">Підписати договір (Дія.Підпис)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ==========================================
+   СИНТЕТИЧНА МАСИВНА БАЗА ДАНИХ
+========================================== */
+const USER_SCORE = 186.4;
+
+const DB = {
+  regions: ["м. Київ", "Львівська обл.", "Харківська обл."],
+  
+  universities: {
+    "KNU": { name: "КНУ ім. Т. Шевченка", region: "м. Київ", type: "Національний", accred: "Акредитація А" },
+    "KPI": { name: "КПІ ім. І. Сікорського", region: "м. Київ", type: "Національний", accred: "Акредитація А" },
+    "LNU": { name: "ЛНУ ім. І. Франка", region: "Львівська обл.", type: "Національний", accred: "Акредитація А" },
+    "LP": { name: "НУ «Львівська політехніка»", region: "Львівська обл.", type: "Національний", accred: "Акредитація А" },
+    "KHNU": { name: "ХНУ ім. В. Каразіна", region: "Харківська обл.", type: "Національний", accred: "Акредитація В" }
+  },
+
+  spheres: {
+    "12": "Інформаційні технології",
+    "08": "Право",
+    "05": "Соціальні та поведінкові науки"
+  },
+
+  specialties: {
+    "121": { name: "Інженерія програмного забезпечення", sphere: "12" },
+    "122": { name: "Комп'ютерні науки", sphere: "12" },
+    "124": { name: "Системний аналіз", sphere: "12" },
+    "081": { name: "Право", sphere: "08" },
+    "053": { name: "Психологія", sphere: "05" }
+  },
+
+  // Статистика ринку праці по конкретних професіях у межах спеціальності
+  professionStats: {
+    "121": [
+      { name: "Backend-розробник", vacancies: 2600, candidatesPerVacancy: 6, salary: 48000 },
+      { name: "Frontend-розробник", vacancies: 2100, candidatesPerVacancy: 9, salary: 42000 },
+      { name: "Мобільний розробник", vacancies: 900, candidatesPerVacancy: 7, salary: 44000 },
+      { name: "QA-інженер", vacancies: 1200, candidatesPerVacancy: 5, salary: 32000 }
+    ],
+    "122": [
+      { name: "Software Engineer", vacancies: 4500, candidatesPerVacancy: 8, salary: 45000 },
+      { name: "Game Developer", vacancies: 700, candidatesPerVacancy: 11, salary: 38000 },
+      { name: "Backend Developer", vacancies: 3200, candidatesPerVacancy: 6, salary: 40000 },
+      { name: "DevOps-інженер", vacancies: 1400, candidatesPerVacancy: 4, salary: 55000 }
+    ],
+    "124": [
+      { name: "Data Scientist", vacancies: 1200, candidatesPerVacancy: 10, salary: 55000 },
+      { name: "System Architect", vacancies: 500, candidatesPerVacancy: 5, salary: 60000 },
+      { name: "Data Analyst", vacancies: 1500, candidatesPerVacancy: 7, salary: 30000 },
+      { name: "Business Analyst", vacancies: 900, candidatesPerVacancy: 8, salary: 34000 }
+    ],
+    "081": [
+      { name: "Юрисконсульт", vacancies: 950, candidatesPerVacancy: 12, salary: 25000 },
+      { name: "Адвокат", vacancies: 400, candidatesPerVacancy: 15, salary: 35000 },
+      { name: "Нотаріус", vacancies: 120, candidatesPerVacancy: 20, salary: 40000 },
+      { name: "Помічник судді", vacancies: 300, candidatesPerVacancy: 18, salary: 20000 }
+    ],
+    "053": [
+      { name: "Клінічний психолог", vacancies: 700, candidatesPerVacancy: 6, salary: 24000 },
+      { name: "HR-менеджер", vacancies: 1600, candidatesPerVacancy: 9, salary: 26000 },
+      { name: "Шкільний психолог", vacancies: 500, candidatesPerVacancy: 4, salary: 16000 }
+    ]
+  },
+
+  offers: [
+    // 124 Системний аналіз
+    { id: "o1", uni: "KPI", spec: "124", 
+      academic: { applicants: 1500, budgetPlaces: 120, minBudget: 182.5, minContract: 155.0, price: 45000, syllabus: "Вища математика, Нейромережі, Системна інженерія, C++" },
+      market: { salary: 42000, empRate: 92, unempRate: 3, vacancies: 1200, jobs: ["Data Scientist", "System Architect"] } },
+    { id: "o2", uni: "LNU", spec: "124", 
+      academic: { applicants: 850, budgetPlaces: 80, minBudget: 178.0, minContract: 145.0, price: 38000, syllabus: "Математичний аналіз, Моделювання систем, Python/R" },
+      market: { salary: 35000, empRate: 88, unempRate: 4, vacancies: 800, jobs: ["Data Analyst", "Business Analyst"] } },
+    
+    // 122 Комп'ютерні науки
+    { id: "o3", uni: "KNU", spec: "122", 
+      academic: { applicants: 2100, budgetPlaces: 150, minBudget: 188.0, minContract: 160.0, price: 48000, syllabus: "Алгоритми, Java/C#, Хмарні технології, Криптографія" },
+      market: { salary: 45000, empRate: 90, unempRate: 5, vacancies: 4500, jobs: ["Software Engineer", "Game Developer"] } },
+    { id: "o4", uni: "LP", spec: "122", 
+      academic: { applicants: 1900, budgetPlaces: 200, minBudget: 180.5, minContract: 150.0, price: 42000, syllabus: "ООП, Бази даних, Web-розробка, Архітектура ПК" },
+      market: { salary: 40000, empRate: 87, unempRate: 6, vacancies: 3200, jobs: ["Backend Developer", "DevOps"] } },
+
+    // 081 Право
+    { id: "o5", uni: "KNU", spec: "081", 
+      academic: { applicants: 3200, budgetPlaces: 90, minBudget: 194.5, minContract: 165.0, price: 62000, syllabus: "Цивільне право, Кримінальне право, Міжнародне право" },
+      market: { salary: 28000, empRate: 65, unempRate: 15, vacancies: 850, jobs: ["Юрисконсульт", "Адвокат", "Нотаріус"] } },
+    { id: "o6", uni: "LNU", spec: "081", 
+      academic: { applicants: 2500, budgetPlaces: 75, minBudget: 191.0, minContract: 160.0, price: 52000, syllabus: "Конституційне право, Теорія держави, Адміністративне право" },
+      market: { salary: 25000, empRate: 68, unempRate: 14, vacancies: 600, jobs: ["Помічник судді", "Юрисконсульт"] } },
+      
+    // 053 Психологія
+    { id: "o7", uni: "KHNU", spec: "053", 
+      academic: { applicants: 1800, budgetPlaces: 60, minBudget: 185.0, minContract: 152.0, price: 39000, syllabus: "Психодіагностика, Загальна психологія, Консультування" },
+      market: { salary: 22000, empRate: 75, unempRate: 10, vacancies: 1100, jobs: ["Клінічний психолог", "HR-менеджер"] } }
+  ]
+};
+
+let myApplications = [];
+let expandedSpheres = new Set();
+let expandedSpecs = new Set();
+let selectedAppForSign = null;
+
+/* ==========================================
+   АВТОРИЗАЦІЯ
+========================================== */
+function startLogin() {
+  document.getElementById('login-form').style.display = 'none';
+  const loader = document.getElementById('login-loading');
+  const log = document.getElementById('loading-log');
+  const step = document.getElementById('loading-step');
+  loader.style.display = 'block';
+
+  const steps = [
+    "Отримання ідентифікаційних даних з Дії...",
+    "✅ Особу встановлено",
+    "Синхронізація з ЄДБО (документи, НМТ)...",
+    "✅ Знайдено Свідоцтво та сертифікат НМТ",
+    "Запит до ЕСОЗ Helsi...",
+    "✅ Довідка 086/о дійсна",
+    "Перевірка в реєстрі Оберіг...",
+    "✅ Військово-обліковий документ дійсний"
+  ];
+
+  let currentDelay = 0;
+  steps.forEach((text, i) => {
+    setTimeout(() => {
+      if(!text.includes("✅")) step.innerText = text;
+      const li = document.createElement('li');
+      li.className = text.includes("✅") ? "text-green-600 font-bold" : "text-gray-600";
+      li.innerText = text;
+      log.appendChild(li);
+      
+      if(i === steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('cabinet-screen').style.display = 'flex';
+          initSystem();
+        }, 800);
+      }
+    }, currentDelay);
+    currentDelay += 600;
+  });
+}
+
+function logout() {
+  document.getElementById('cabinet-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-form').style.display = 'block';
+  document.getElementById('login-loading').style.display = 'none';
+  document.getElementById('loading-log').innerHTML = '';
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('tab-' + tabId).classList.add('active');
+}
+
+/* ==========================================
+   ІНІЦІАЛІЗАЦІЯ ТА ФІЛЬТРИ
+========================================== */
+function initSystem() {
+  const regSelect = document.getElementById('flt-region');
+  DB.regions.forEach(r => regSelect.add(new Option(r, r)));
+
+  const sphereSelect = document.getElementById('flt-sphere');
+  Object.entries(DB.spheres).forEach(([id, name]) => sphereSelect.add(new Option(`${id} ${name}`, id)));
+
+  updateFilters();
+  renderSpecialtyChoice();
+}
+
+/* ==========================================
+   ВКЛАДКА "ВИБІР СПЕЦІАЛЬНОСТІ"
+========================================== */
+function renderSpecialtyChoice() {
+  const container = document.getElementById('specialty-choice-container');
+  container.innerHTML = '';
+
+  Object.entries(DB.specialties).forEach(([specId, spec]) => {
+    const offers = DB.offers.filter(o => o.spec === specId);
+    if (offers.length === 0) return;
+
+    const totalApplicants = offers.reduce((sum, o) => sum + o.academic.applicants, 0);
+    const avgMinBudget = offers.reduce((sum, o) => sum + o.academic.minBudget, 0) / offers.length;
+    const avgMinContract = offers.reduce((sum, o) => sum + o.academic.minContract, 0) / offers.length;
+    const avgEmpRate = offers.reduce((sum, o) => sum + o.market.empRate, 0) / offers.length;
+    const avgUnempRate = offers.reduce((sum, o) => sum + o.market.unempRate, 0) / offers.length;
+
+    const professions = DB.professionStats[specId] || [];
+
+    let professionsHtml = professions.map(p => `
+      <tr class="border-b border-gray-100 last:border-none">
+        <td class="py-2 pr-3 font-semibold text-gray-800">${p.name}</td>
+        <td class="py-2 pr-3 text-center">${p.vacancies.toLocaleString()}</td>
+        <td class="py-2 pr-3 text-center">${p.candidatesPerVacancy}</td>
+        <td class="py-2 text-right font-bold text-edboPrimary">${p.salary.toLocaleString()} ₴</td>
+      </tr>
+    `).join('');
+
+    container.innerHTML += `
+      <div class="mui-paper overflow-hidden">
+        <div class="p-5 border-b border-gray-200 bg-gray-50">
+          <div class="text-xs font-bold text-edboPrimary uppercase tracking-wider mb-1">Спеціальність ${specId} | Галузь ${spec.sphere}: ${DB.spheres[spec.sphere]}</div>
+          <h3 class="text-xl font-bold m-0 text-gray-800">${spec.name}</h3>
+        </div>
+
+        <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-gray-100">
+          <div>
+            <div class="text-[10px] text-gray-500 uppercase">Кількість вступників (торік)</div>
+            <div class="font-black text-lg text-gray-800">${totalApplicants.toLocaleString()}</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-gray-500 uppercase">Сер. бал (бюджет / контракт)</div>
+            <div class="font-black text-lg text-edboPrimary">${avgMinBudget.toFixed(1)} / ${avgMinContract.toFixed(1)}</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-gray-500 uppercase">Працевлаштування за фахом</div>
+            <div class="font-black text-lg text-green-700">${Math.round(avgEmpRate)}%</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-gray-500 uppercase">Не знайшли роботу за фахом</div>
+            <div class="font-black text-lg ${avgUnempRate > 10 ? 'text-red-500' : 'text-gray-800'}">${Math.round(avgUnempRate)}%</div>
+          </div>
+        </div>
+
+        <div class="p-5">
+          <div class="text-[10px] font-black text-gray-400 uppercase mb-3">Можливі професії та статистика ринку праці</div>
+          ${professions.length ? `
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-[10px] text-gray-500 uppercase border-b border-gray-200">
+                  <th class="text-left py-2 pr-3 font-bold">Професія</th>
+                  <th class="text-center py-2 pr-3 font-bold">Кількість вакансій</th>
+                  <th class="text-center py-2 pr-3 font-bold">Сер. к-сть кандидатів / вакансію</th>
+                  <th class="text-right py-2 font-bold">Сер. заробітна плата</th>
+                </tr>
+              </thead>
+              <tbody>${professionsHtml}</tbody>
+            </table>
+          </div>
+          ` : '<div class="text-sm text-gray-500">Дані по професіях відсутні</div>'}
+        </div>
+      </div>
+    `;
+  });
+}
+
+function updateFilters() {
+  const reg = document.getElementById('flt-region').value;
+  const uniSelect = document.getElementById('flt-uni');
+  
+  while(uniSelect.options.length > 1) uniSelect.remove(1);
+  
+  Object.entries(DB.universities).forEach(([id, u]) => {
+    if(reg === 'all' || u.region === reg) {
+      uniSelect.add(new Option(u.name, id));
+    }
+  });
+  renderAnalytics();
+}
+
+/* ==========================================
+   АНАЛІТИКА ТА РЕНДЕР
+========================================== */
+function toggleSphere(id) { expandedSpheres.has(id) ? expandedSpheres.delete(id) : expandedSpheres.add(id); renderHTML(); }
+function toggleSpec(id) { expandedSpecs.has(id) ? expandedSpecs.delete(id) : expandedSpecs.add(id); renderHTML(); }
+
+let currentRenderData = {};
+
+function renderAnalytics() {
+  const fReg = document.getElementById('flt-region').value;
+  const fUni = document.getElementById('flt-uni').value;
+  const fSphere = document.getElementById('flt-sphere').value;
+  const sort = document.getElementById('flt-sort').value;
+
+  // 1. Фільтруємо
+  let filtered = DB.offers.filter(o => {
+    const uni = DB.universities[o.uni];
+    const spec = DB.specialties[o.spec];
+    if (fReg !== 'all' && uni.region !== fReg) return false;
+    if (fUni !== 'all' && o.uni !== fUni) return false;
+    if (fSphere !== 'all' && spec.sphere !== fSphere) return false;
+    return true;
+  });
+
+  // 2. Сортуємо пропозиції
+  filtered.sort((a, b) => {
+    if(sort === 'budgetAsc') return a.academic.minBudget - b.academic.minBudget;
+    if(sort === 'budgetDesc') return b.academic.minBudget - a.academic.minBudget;
+    if(sort === 'contractAsc') return a.academic.minContract - b.academic.minContract;
+    if(sort === 'salaryDesc') return b.market.salary - a.market.salary;
+    if(sort === 'empDesc') return b.market.empRate - a.market.empRate;
+    return 0;
+  });
+
+  // 3. Групуємо (Сфера -> Спеціальність -> Пропозиції)
+  const tree = {};
+  filtered.forEach(o => {
+    const specInfo = DB.specialties[o.spec];
+    const sphId = specInfo.sphere;
+    
+    if(!tree[sphId]) tree[sphId] = { id: sphId, name: DB.spheres[sphId], specs: {}, allOffers: [] };
+    if(!tree[sphId].specs[o.spec]) tree[sphId].specs[o.spec] = { id: o.spec, name: specInfo.name, offers: [] };
+    
+    tree[sphId].allOffers.push(o);
+    tree[sphId].specs[o.spec].offers.push(o);
+  });
+
+  currentRenderData = tree;
+  renderHTML();
+}
+
+function renderHTML() {
+  const container = document.getElementById('analytics-container');
+  container.innerHTML = '';
+  const isViewMode = document.getElementById('mode-view').checked;
+
+  if(Object.keys(currentRenderData).length === 0) {
+    container.innerHTML = '<div class="mui-paper p-8 text-center text-gray-500 font-bold">Нічого не знайдено за вашими критеріями</div>';
+    return;
+  }
+
+  Object.values(currentRenderData).forEach(sphere => {
+    // Агрегація для сфери
+    const avgSal = sphere.allOffers.reduce((sum, o) => sum + o.market.salary, 0) / sphere.allOffers.length;
+    const avgEmp = sphere.allOffers.reduce((sum, o) => sum + o.market.empRate, 0) / sphere.allOffers.length;
+    
+    let html = `
+      <div class="mui-paper overflow-hidden p-0 mb-4 border border-gray-300">
+        <div class="accordion-header p-4 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gray-50 border-b border-gray-200" onclick="toggleSphere('${sphere.id}')">
+          <div>
+            <div class="text-xs font-bold text-edboPrimary uppercase tracking-wider mb-1">Сфера / Галузь знань ${sphere.id}</div>
+            <h3 class="text-xl font-bold m-0 text-gray-800">${sphere.name}</h3>
+          </div>
+          <div class="flex gap-4">
+            <div class="text-right">
+              <div class="text-[10px] text-gray-500 uppercase">Сер. Зарплата (ПФУ)</div>
+              <div class="font-black text-lg text-edboPrimary">${Math.round(avgSal).toLocaleString()} ₴</div>
+            </div>
+            <div class="text-right border-l pl-4">
+              <div class="text-[10px] text-gray-500 uppercase">Працевлашт. (ПФУ)</div>
+              <div class="font-black text-lg text-green-700">${Math.round(avgEmp)}%</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="${expandedSpheres.has(sphere.id) ? '' : 'hidden-block'}">
+    `;
+
+    Object.values(sphere.specs).forEach(spec => {
+      const minBdg = Math.min(...spec.offers.map(o => o.academic.minBudget));
+
+      html += `
+        <div class="border-b border-gray-200 last:border-none bg-white">
+          <div class="accordion-header p-3 pl-8 flex justify-between items-center bg-blue-50/30" onclick="toggleSpec('${spec.id}')">
+            <div class="font-bold text-lg text-gray-800">${spec.id} ${spec.name} <span class="text-xs text-gray-500 font-normal ml-2">(${spec.offers.length} пропозицій)</span></div>
+            <div class="text-xs font-bold text-gray-600">Мін. бал на бюджет: <span class="text-edboPrimary">${minBdg}</span></div>
+          </div>
+          
+          <div class="${expandedSpecs.has(spec.id) ? '' : 'hidden-block'} p-4 pl-12 bg-white space-y-4">
+      `;
+
+      spec.offers.forEach(offer => {
+        const uni = DB.universities[offer.uni];
+        
+        // Логіка кнопки "Подати заяву"
+        let btnHtml = '';
+        if (isViewMode) {
+          btnHtml = `<button class="mui-btn mui-btn-primary" disabled>Подати заяву</button><div class="text-[10px] text-gray-500 mt-1">Режим огляду</div>`;
+        } else {
+          if (USER_SCORE >= offer.academic.minBudget) {
+            btnHtml = `<button class="mui-btn bg-green-600 hover:bg-green-700 text-white" onclick="apply('${offer.id}')">Подати на БЮДЖЕТ</button><div class="text-[10px] text-green-700 mt-1 font-bold">Ваш бал (${USER_SCORE}) проходить!</div>`;
+          } else if (USER_SCORE >= offer.academic.minContract) {
+            btnHtml = `<button class="mui-btn bg-yellow-500 hover:bg-yellow-600 text-white" onclick="apply('${offer.id}')">Подати на КОНТРАКТ</button><div class="text-[10px] text-gray-500 mt-1">Бракує балів на бюджет</div>`;
+          } else {
+            btnHtml = `<button class="mui-btn" disabled>Недостатньо балів</button>`;
+          }
+        }
+
+        html += `
+            <div class="border border-gray-200 rounded-lg p-0 flex flex-col xl:flex-row overflow-hidden shadow-sm">
+              <!-- Інформація про Універ -->
+              <div class="flex-1 p-5">
+                <div class="text-xs text-gray-500 mb-1">${uni.region} | ${uni.type} | ${uni.accred}</div>
+                <h4 class="font-black text-xl text-edboPrimary m-0 mb-3">${uni.name}</h4>
+                <div class="text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded border border-gray-100">
+                  <b>Силабус програми:</b> ${offer.academic.syllabus}
+                </div>
+                <div class="flex gap-2 text-xs font-bold">
+                  <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Бюджет: ${offer.academic.budgetPlaces} місць (від ${offer.academic.minBudget} б.)</span>
+                  <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Контракт: ${offer.academic.price.toLocaleString()} ₴/рік (від ${offer.academic.minContract} б.)</span>
+                  <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded">Конкурс торік: ${offer.academic.applicants} заяв</span>
+                </div>
+              </div>
+
+              <!-- Аналітика ПФУ -->
+              <div class="w-full xl:w-[320px] bg-gray-50 border-l border-gray-200 p-5 flex flex-col justify-between shrink-0">
+                <div>
+                  <div class="text-[10px] font-black text-gray-400 uppercase mb-3 border-b pb-1 flex justify-between">
+                    <span>Статистика випускників</span>
+                    <span class="text-edboPrimary">Дані ПФУ та ДЦЗ</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div><div class="text-[10px] text-gray-500">Середня ЗП</div><div class="font-black text-edboPrimary text-lg">${offer.market.salary.toLocaleString()} ₴</div></div>
+                    <div><div class="text-[10px] text-gray-500">Вакансії в Україні</div><div class="font-black text-gray-800 text-lg">${offer.market.vacancies}</div></div>
+                    <div><div class="text-[10px] text-gray-500">Працюють за фахом</div><div class="font-black text-green-600 text-lg">${offer.market.empRate}%</div></div>
+                    <div><div class="text-[10px] text-gray-500">Не працевлаштовано</div><div class="font-black ${offer.market.unempRate > 10 ? 'text-red-500' : 'text-gray-800'} text-lg">${offer.market.unempRate}%</div></div>
+                  </div>
+                  <div class="text-[10px] text-gray-500 mb-1">Популярні посади:</div>
+                  <div class="text-xs font-bold text-gray-700">${offer.market.jobs.join(', ')}</div>
+                </div>
+                <div class="mt-5 text-center">
+                  ${btnHtml}
+                </div>
+              </div>
+            </div>
+        `;
+      });
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+    container.innerHTML += html;
+  });
+}
+
+/* ==========================================
+   ПОДАЧА ЗАЯВИ ТА ЗАРАХУВАННЯ
+========================================== */
+function apply(offerId) {
+  const offer = DB.offers.find(o => o.id === offerId);
+  const uni = DB.universities[offer.uni];
+  const spec = DB.specialties[offer.spec];
+  
+  const budgetPass = USER_SCORE >= offer.academic.minBudget;
+  const status = budgetPass ? 'Рекомендовано (Бюджет)' : 'Допущено (Контракт)';
+  
+  myApplications.push({ id: offerId, uniName: uni.name, specName: `${offer.spec} ${spec.name}`, status: status });
+  renderMyApps();
+  
+  switchTab('vstup');
+  alert(`Заяву успішно подано!\n\nВи одразу пройшли верифікацію завдяки Дії. Паперові копії документів везти до приймальної комісії не потрібно.`);
+}
+
+function renderMyApps() {
+  const container = document.getElementById('my-apps-container');
+  if(myApplications.length === 0) return;
+  
+  container.innerHTML = '';
+  myApplications.forEach(app => {
+    container.innerHTML += `
+      <div class="mui-paper p-5 border-2 border-green-500 bg-green-50/30 flex flex-col md:flex-row justify-between md:items-center gap-4">
+        <div>
+          <span class="bg-green-200 text-green-800 px-3 py-1 rounded-full text-xs font-bold uppercase mb-2 inline-block">${app.status}</span>
+          <h4 class="font-black text-lg text-gray-800 m-0">${app.uniName}</h4>
+          <p class="text-gray-600 text-sm m-0 mt-1">${app.specName}</p>
+        </div>
+        <button class="mui-btn mui-btn-primary !bg-black hover:!bg-gray-800 flex items-center gap-2 whitespace-nowrap" onclick="openModal('${app.id}')">
+          Оформити зарахування (Без паперів)
+        </button>
+      </div>
+    `;
+  });
+}
+
+function openModal(id) {
+  selectedAppForSign = id;
+  const app = myApplications.find(a => a.id === id);
+  document.getElementById('modal-app-details').innerText = `${app.specName} | ${app.uniName}`;
+  document.getElementById('modal-sign').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal-sign').style.display = 'none';
+  selectedAppForSign = null;
+}
+
+function confirmSign() {
+  alert("Договір успішно підписано Дія.Підписом!\n\nВи офіційно зараховані. Дані передано в університет.");
+  closeModal();
+  
+  const container = document.getElementById('my-apps-container');
+  container.innerHTML = container.innerHTML.replace(
+    /<button.*?Оформити зарахування.*?<\/button>/s, 
+    '<div class="text-green-700 font-black text-right">✓ ЗАРАХОВАНО. Договір підписано електронно</div>'
+  );
+}
+</script>
+</body>
+</html>
