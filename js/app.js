@@ -253,8 +253,8 @@ function renderProfessionCharts(specId) {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { ticks: { font: { size: 9 } } },
-          x: { ticks: { font: { size: 9 } } }
+          y: { ticks: { font: { size: 12 } } },
+          x: { ticks: { font: { size: 12 } } }
         }
       }
     });
@@ -290,11 +290,11 @@ function renderProfessionCharts(specId) {
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+          legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 12 } } }
         },
         scales: {
-          y: { position: 'left', title: { display: true, text: 'Вакансії', font: { size: 10 } }, ticks: { font: { size: 9 } } },
-          y1: { position: 'right', title: { display: true, text: 'Кандидатів/вакансію', font: { size: 10 } }, grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } }
+          y: { position: 'left', title: { display: true, text: 'Вакансії', font: { size: 12 } }, ticks: { font: { size: 12 } } },
+          y1: { position: 'right', title: { display: true, text: 'Кандидатів/вакансію', font: { size: 12 } }, grid: { drawOnChartArea: false }, ticks: { font: { size: 12 } } }
         }
       }
     });
