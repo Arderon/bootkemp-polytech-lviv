@@ -96,33 +96,63 @@ const DB = {
   // професії), щоб графіки не були штучно гладкими й відрізнялись один від одного.
   professionStats: {
     "121": [
-      { name: "Backend-розробник", vacancies: 2600, candidatesPerVacancy: 6, salary: 48000 },
-      { name: "Frontend-розробник", vacancies: 2100, candidatesPerVacancy: 9, salary: 42000 },
-      { name: "Мобільний розробник", vacancies: 900, candidatesPerVacancy: 7, salary: 44000 },
-      { name: "QA-інженер", vacancies: 1200, candidatesPerVacancy: 5, salary: 32000 }
+      { name: "Backend-розробник", description: "Розробляє серверну логіку, API та бази даних, які лежать в основі застосунків.", vacancies: 2600, candidatesPerVacancy: 6, salary: 48000 },
+      { name: "Frontend-розробник", description: "Створює інтерфейси сайтів і застосунків, з якими безпосередньо взаємодіє користувач.", vacancies: 2100, candidatesPerVacancy: 9, salary: 42000 },
+      { name: "Мобільний розробник", description: "Пише застосунки для iOS та Android.", vacancies: 900, candidatesPerVacancy: 7, salary: 44000 },
+      { name: "QA-інженер", description: "Тестує програмне забезпечення та стежить за якістю продукту перед випуском.", vacancies: 1200, candidatesPerVacancy: 5, salary: 32000 }
     ],
     "122": [
-      { name: "Software Engineer", vacancies: 4500, candidatesPerVacancy: 8, salary: 45000 },
-      { name: "Game Developer", vacancies: 700, candidatesPerVacancy: 11, salary: 38000 },
-      { name: "Backend Developer", vacancies: 3200, candidatesPerVacancy: 6, salary: 40000 },
-      { name: "DevOps-інженер", vacancies: 1400, candidatesPerVacancy: 4, salary: 55000 }
+      { name: "Software Engineer", description: "Проєктує та розробляє програмне забезпечення для різних платформ і галузей.", vacancies: 4500, candidatesPerVacancy: 8, salary: 45000 },
+      { name: "Game Developer", description: "Розробляє ігрову логіку, механіки та графіку для відеоігор.", vacancies: 700, candidatesPerVacancy: 11, salary: 38000 },
+      { name: "Backend Developer", description: "Відповідає за серверну частину застосунків та їх взаємодію з базами даних.", vacancies: 3200, candidatesPerVacancy: 6, salary: 40000 },
+      { name: "DevOps-інженер", description: "Автоматизує розгортання, налаштовує інфраструктуру та хмарні сервіси.", vacancies: 1400, candidatesPerVacancy: 4, salary: 55000 }
     ],
     "124": [
-      { name: "Data Scientist", vacancies: 1200, candidatesPerVacancy: 10, salary: 55000 },
-      { name: "System Architect", vacancies: 500, candidatesPerVacancy: 5, salary: 60000 },
-      { name: "Data Analyst", vacancies: 1500, candidatesPerVacancy: 7, salary: 30000 },
-      { name: "Business Analyst", vacancies: 900, candidatesPerVacancy: 8, salary: 34000 }
+      { name: "Data Scientist", description: "Аналізує великі масиви даних і будує моделі машинного навчання для прогнозів.", vacancies: 1200, candidatesPerVacancy: 10, salary: 55000 },
+      { name: "System Architect", description: "Проєктує архітектуру складних інформаційних систем.", vacancies: 500, candidatesPerVacancy: 5, salary: 60000 },
+      { name: "Data Analyst", description: "Обробляє та інтерпретує дані для підтримки бізнес-рішень.", vacancies: 1500, candidatesPerVacancy: 7, salary: 30000 },
+      { name: "Business Analyst", description: "Аналізує бізнес-процеси та формулює вимоги до ІТ-рішень.", vacancies: 900, candidatesPerVacancy: 8, salary: 34000 }
     ],
     "081": [
-      { name: "Юрисконсульт", vacancies: 950, candidatesPerVacancy: 12, salary: 25000 },
-      { name: "Адвокат", vacancies: 400, candidatesPerVacancy: 15, salary: 35000 },
-      { name: "Нотаріус", vacancies: 120, candidatesPerVacancy: 20, salary: 40000 },
-      { name: "Помічник судді", vacancies: 300, candidatesPerVacancy: 18, salary: 20000 }
+      { name: "Юрисконсульт", description: "Супроводжує правові питання компанії та готує договори і документи.", vacancies: 950, candidatesPerVacancy: 12, salary: 25000 },
+      { name: "Адвокат", description: "Представляє інтереси клієнтів у судах та надає правову допомогу.", vacancies: 400, candidatesPerVacancy: 15, salary: 35000 },
+      { name: "Нотаріус", description: "Посвідчує правочини та документи, забезпечуючи їх юридичну силу.", vacancies: 120, candidatesPerVacancy: 20, salary: 40000 },
+      { name: "Помічник судді", description: "Допомагає судді готувати справи та оформлювати судові рішення.", vacancies: 300, candidatesPerVacancy: 18, salary: 20000 }
     ],
     "053": [
-      { name: "Клінічний психолог", vacancies: 700, candidatesPerVacancy: 6, salary: 24000 },
-      { name: "HR-менеджер", vacancies: 1600, candidatesPerVacancy: 9, salary: 26000 },
-      { name: "Шкільний психолог", vacancies: 500, candidatesPerVacancy: 4, salary: 16000 }
+      { name: "Клінічний психолог", description: "Діагностує та консультує людей з психологічними та психоемоційними труднощами.", vacancies: 700, candidatesPerVacancy: 6, salary: 24000 },
+      { name: "HR-менеджер", description: "Займається підбором, адаптацією та розвитком персоналу компанії.", vacancies: 1600, candidatesPerVacancy: 9, salary: 26000 },
+      { name: "Шкільний психолог", description: "Супроводжує психологічний розвиток та адаптацію учнів у школі.", vacancies: 500, candidatesPerVacancy: 4, salary: 16000 }
+    ],
+    "073": [
+      { name: "Проєктний менеджер", description: "Планує, координує та контролює виконання бізнес-проєктів.", vacancies: 1300, candidatesPerVacancy: 9, salary: 32000 },
+      { name: "Маркетолог", description: "Досліджує ринок і розробляє стратегії просування продуктів та послуг.", vacancies: 1600, candidatesPerVacancy: 10, salary: 24000 },
+      { name: "Менеджер із логістики", description: "Організовує постачання, складський облік та транспортування товарів.", vacancies: 900, candidatesPerVacancy: 8, salary: 26000 },
+      { name: "Офіс-менеджер", description: "Забезпечує адміністративну підтримку та організацію роботи офісу.", vacancies: 700, candidatesPerVacancy: 6, salary: 18000 }
+    ],
+    "071": [
+      { name: "Бухгалтер", description: "Веде фінансовий облік підприємства та готує звітність.", vacancies: 2200, candidatesPerVacancy: 7, salary: 23000 },
+      { name: "Аудитор", description: "Перевіряє фінансову звітність компаній на відповідність законодавству.", vacancies: 500, candidatesPerVacancy: 11, salary: 29000 },
+      { name: "Податковий консультант", description: "Консультує бізнес з питань оподаткування та податкової оптимізації.", vacancies: 400, candidatesPerVacancy: 9, salary: 27000 },
+      { name: "Фінансовий аналітик", description: "Аналізує фінансові показники компанії для прийняття управлінських рішень.", vacancies: 800, candidatesPerVacancy: 10, salary: 25000 }
+    ],
+    "014": [
+      { name: "Вчитель початкових класів", description: "Навчає та виховує учнів початкової школи.", vacancies: 1800, candidatesPerVacancy: 5, salary: 15000 },
+      { name: "Вчитель-предметник", description: "Викладає окремий шкільний предмет учням середньої та старшої школи.", vacancies: 2000, candidatesPerVacancy: 6, salary: 16000 },
+      { name: "Класний керівник", description: "Координує виховну роботу та супроводжує клас упродовж навчання.", vacancies: 1200, candidatesPerVacancy: 4, salary: 14000 },
+      { name: "Методист", description: "Розробляє навчальні програми та методичні матеріали для закладів освіти.", vacancies: 300, candidatesPerVacancy: 8, salary: 17000 }
+    ],
+    "222": [
+      { name: "Лікар загальної практики", description: "Надає первинну медичну допомогу пацієнтам різного віку.", vacancies: 2200, candidatesPerVacancy: 14, salary: 32000 },
+      { name: "Педіатр", description: "Спеціалізується на лікуванні та профілактиці захворювань у дітей.", vacancies: 1300, candidatesPerVacancy: 12, salary: 30000 },
+      { name: "Хірург", description: "Проводить оперативні втручання для лікування захворювань і травм.", vacancies: 700, candidatesPerVacancy: 18, salary: 45000 },
+      { name: "Сімейний лікар", description: "Здійснює комплексний медичний нагляд за пацієнтом і його родиною.", vacancies: 1900, candidatesPerVacancy: 13, salary: 31000 }
+    ],
+    "133": [
+      { name: "Інженер-конструктор", description: "Розробляє креслення та конструкції механізмів і машин.", vacancies: 950, candidatesPerVacancy: 8, salary: 27000 },
+      { name: "Інженер-технолог", description: "Розробляє та впроваджує технологічні процеси виробництва.", vacancies: 700, candidatesPerVacancy: 9, salary: 25000 },
+      { name: "Інженер-механік", description: "Обслуговує, налагоджує та ремонтує промислове обладнання.", vacancies: 800, candidatesPerVacancy: 7, salary: 25000 },
+      { name: "CAD-конструктор", description: "Створює 3D-моделі та технічну документацію за допомогою САПР.", vacancies: 400, candidatesPerVacancy: 10, salary: 23000 }
     ]
   },
 
@@ -154,7 +184,47 @@ const DB = {
     // 053 Психологія
     { id: "o7", uni: "KHNU", spec: "053",
       academic: { applicants: 1800, budgetPlaces: 60, minBudget: 185.0, minContract: 152.0, price: 39000, syllabus: "Психодіагностика, Загальна психологія, Консультування" },
-      market: { salary: 22000, empRate: 75, unempRate: 10, vacancies: 1100, jobs: ["Клінічний психолог", "HR-менеджер"] } }
+      market: { salary: 22000, empRate: 75, unempRate: 10, vacancies: 1100, jobs: ["Клінічний психолог", "HR-менеджер"] } },
+
+    // 073 Менеджмент
+    { id: "o8", uni: "KNU", spec: "073",
+      academic: { applicants: 1400, budgetPlaces: 70, minBudget: 175.0, minContract: 140.0, price: 40000, syllabus: "Основи менеджменту, Маркетинг, Управління проєктами, Бізнес-аналітика" },
+      market: { salary: 26000, empRate: 78, unempRate: 9, vacancies: 1300, jobs: ["Проєктний менеджер", "Маркетолог"] } },
+    { id: "o9", uni: "LP", spec: "073",
+      academic: { applicants: 1100, budgetPlaces: 90, minBudget: 170.0, minContract: 135.0, price: 36000, syllabus: "Стратегічний менеджмент, Логістика, Управління персоналом" },
+      market: { salary: 24000, empRate: 75, unempRate: 10, vacancies: 1000, jobs: ["Менеджер із логістики", "Офіс-менеджер"] } },
+
+    // 071 Облік і оподаткування
+    { id: "o10", uni: "KNU", spec: "071",
+      academic: { applicants: 900, budgetPlaces: 60, minBudget: 172.0, minContract: 138.0, price: 38000, syllabus: "Бухгалтерський облік, Аудит, Податкова система, Фінансова звітність" },
+      market: { salary: 23000, empRate: 80, unempRate: 8, vacancies: 900, jobs: ["Бухгалтер", "Аудитор"] } },
+    { id: "o11", uni: "KHNU", spec: "071",
+      academic: { applicants: 700, budgetPlaces: 55, minBudget: 168.0, minContract: 132.0, price: 34000, syllabus: "Фінансовий облік, Економічний аналіз, Податкове право" },
+      market: { salary: 21000, empRate: 77, unempRate: 9, vacancies: 750, jobs: ["Бухгалтер", "Податковий консультант"] } },
+
+    // 014 Середня освіта
+    { id: "o12", uni: "LNU", spec: "014",
+      academic: { applicants: 800, budgetPlaces: 100, minBudget: 160.0, minContract: 120.0, price: 28000, syllabus: "Педагогіка, Вікова психологія, Методика викладання, Фахова дисципліна" },
+      market: { salary: 15000, empRate: 70, unempRate: 8, vacancies: 1800, jobs: ["Вчитель", "Класний керівник"] } },
+    { id: "o13", uni: "KHNU", spec: "014",
+      academic: { applicants: 650, budgetPlaces: 85, minBudget: 158.0, minContract: 118.0, price: 26000, syllabus: "Дидактика, Шкільна гігієна, Інклюзивна освіта" },
+      market: { salary: 14000, empRate: 68, unempRate: 9, vacancies: 1500, jobs: ["Вчитель початкових класів", "Методист"] } },
+
+    // 222 Медицина
+    { id: "o14", uni: "KNU", spec: "222",
+      academic: { applicants: 4200, budgetPlaces: 110, minBudget: 195.0, minContract: 170.0, price: 75000, syllabus: "Анатомія людини, Фізіологія, Біохімія, Фармакологія, Терапія" },
+      market: { salary: 32000, empRate: 94, unempRate: 2, vacancies: 2200, jobs: ["Лікар загальної практики", "Педіатр"] } },
+    { id: "o15", uni: "LNU", spec: "222",
+      academic: { applicants: 3600, budgetPlaces: 95, minBudget: 192.5, minContract: 165.0, price: 68000, syllabus: "Патофізіологія, Хірургія, Внутрішня медицина" },
+      market: { salary: 30000, empRate: 92, unempRate: 3, vacancies: 1900, jobs: ["Сімейний лікар", "Хірург"] } },
+
+    // 133 Галузеве машинобудування
+    { id: "o16", uni: "KPI", spec: "133",
+      academic: { applicants: 600, budgetPlaces: 80, minBudget: 165.0, minContract: 130.0, price: 37000, syllabus: "Опір матеріалів, Деталі машин, CAD/CAM системи, Матеріалознавство" },
+      market: { salary: 27000, empRate: 82, unempRate: 7, vacancies: 950, jobs: ["Інженер-конструктор", "Інженер-технолог"] } },
+    { id: "o17", uni: "LP", spec: "133",
+      academic: { applicants: 520, budgetPlaces: 70, minBudget: 162.0, minContract: 125.0, price: 34000, syllabus: "Технологія машинобудування, Гідравліка, Автоматизація виробництва" },
+      market: { salary: 25000, empRate: 80, unempRate: 8, vacancies: 800, jobs: ["Інженер-механік", "CAD-конструктор"] } }
   ]
 };
 

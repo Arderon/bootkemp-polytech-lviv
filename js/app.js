@@ -86,18 +86,49 @@ function renderSpecialtyChoice() {
   Object.values(specialtyCharts).forEach(c => c.destroy());
   specialtyCharts = {};
 
-  const specIdsWithProfessions = [];
+  const sortField = document.getElementById('spec-sort-field')?.value || 'number';
+  const sortDir = document.getElementById('spec-sort-dir')?.value || 'asc';
 
-  Object.entries(DB.specialties).forEach(([specId, spec]) => {
+  const records = Object.entries(DB.specialties).map(([specId, spec]) => {
     const offers = DB.offers.filter(o => o.spec === specId);
     const hasData = offers.length > 0;
-    const isExpanded = expandedSpecialties.has(specId);
 
-    const totalApplicants = hasData ? offers.reduce((sum, o) => sum + o.academic.applicants, 0) : 0;
-    const avgMinBudget = hasData ? offers.reduce((sum, o) => sum + o.academic.minBudget, 0) / offers.length : 0;
-    const avgMinContract = hasData ? offers.reduce((sum, o) => sum + o.academic.minContract, 0) / offers.length : 0;
-    const avgEmpRate = hasData ? offers.reduce((sum, o) => sum + o.market.empRate, 0) / offers.length : 0;
-    const avgUnempRate = hasData ? offers.reduce((sum, o) => sum + o.market.unempRate, 0) / offers.length : 0;
+    return {
+      specId,
+      spec,
+      offers,
+      hasData,
+      totalApplicants: hasData ? offers.reduce((sum, o) => sum + o.academic.applicants, 0) : 0,
+      avgMinBudget: hasData ? offers.reduce((sum, o) => sum + o.academic.minBudget, 0) / offers.length : 0,
+      avgMinContract: hasData ? offers.reduce((sum, o) => sum + o.academic.minContract, 0) / offers.length : 0,
+      avgEmpRate: hasData ? offers.reduce((sum, o) => sum + o.market.empRate, 0) / offers.length : 0,
+      avgUnempRate: hasData ? offers.reduce((sum, o) => sum + o.market.unempRate, 0) / offers.length : 0,
+      avgSalary: hasData ? offers.reduce((sum, o) => sum + o.market.salary, 0) / offers.length : 0
+    };
+  });
+
+  function sortValue(rec) {
+    if (sortField === 'number') return parseInt(rec.specId, 10);
+    if (!rec.hasData) return null;
+    if (sortField === 'salary') return rec.avgSalary;
+    if (sortField === 'emp') return rec.avgEmpRate;
+    if (sortField === 'score') return rec.avgMinBudget;
+    return null;
+  }
+
+  records.sort((a, b) => {
+    const va = sortValue(a);
+    const vb = sortValue(b);
+    if (va === null && vb === null) return 0;
+    if (va === null) return 1;
+    if (vb === null) return -1;
+    return sortDir === 'asc' ? va - vb : vb - va;
+  });
+
+  const specIdsWithProfessions = [];
+
+  records.forEach(({ specId, spec, hasData, totalApplicants, avgMinBudget, avgMinContract, avgEmpRate, avgUnempRate, avgSalary }) => {
+    const isExpanded = expandedSpecialties.has(specId);
 
     const professions = DB.professionStats[specId] || [];
     if (professions.length && isExpanded) specIdsWithProfessions.push(specId);
@@ -121,7 +152,7 @@ function renderSpecialtyChoice() {
           </div>
 
           ${hasData ? `
-          <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-gray-100">
+          <div class="p-5 grid grid-cols-2 md:grid-cols-5 gap-4 border-t border-gray-100">
             <div>
               <div class="text-[10px] text-gray-500 uppercase">Кількість вступників (торік)</div>
               <div class="font-black text-lg text-gray-800">${totalApplicants.toLocaleString()}</div>
@@ -138,9 +169,22 @@ function renderSpecialtyChoice() {
               <div class="text-[10px] text-gray-500 uppercase">Не знайшли роботу за фахом</div>
               <div class="font-black text-lg ${avgUnempRate > 10 ? 'text-red-500' : 'text-gray-800'}">${Math.round(avgUnempRate)}%</div>
             </div>
+            <div>
+              <div class="text-[10px] text-gray-500 uppercase">Сер. заробітна плата</div>
+              <div class="font-black text-lg text-edboPrimary">${Math.round(avgSalary).toLocaleString()} ₴</div>
+            </div>
           </div>
 
           <div class="p-5 border-t border-gray-100">
+            ${professions.length ? `
+            <div class="text-[10px] font-black text-gray-400 uppercase mb-2">Можливі професії</div>
+            <ul class="space-y-1 mb-5 pl-0 list-none">
+              ${professions.map(p => `
+                <li class="text-sm text-gray-700"><span class="font-bold text-gray-800">${p.name}</span> — ${p.description || 'Опис буде додано найближчим часом.'}</li>
+              `).join('')}
+            </ul>
+            ` : ''}
+
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
               <div class="text-[10px] font-black text-gray-400 uppercase">Динаміка ринку праці (${DB.professionYears[0]}-${DB.professionYears[DB.professionYears.length - 1]})</div>
               ${professions.length ? `

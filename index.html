@@ -132,7 +132,27 @@
           <!-- ВКЛАДКА: ВИБІР СПЕЦІАЛЬНОСТІ -->
           <div id="tab-specialty-choice" class="tab-content">
             <h2 class="text-2xl font-bold text-edboPrimary mb-1 m-0">Вибір спеціальності</h2>
-            <p class="text-sm text-gray-500 mb-6 mt-1">Загальна статистика по спеціальностях: конкурс, прохідні бали та ринок праці випускників за даними ПФУ і ДЦЗ</p>
+            <p class="text-sm text-gray-500 mb-4 mt-1">Загальна статистика по спеціальностях: конкурс, прохідні бали та ринок праці випускників за даними ПФУ і ДЦЗ</p>
+
+            <div class="flex flex-col sm:flex-row sm:items-end gap-4 mb-6">
+              <div class="w-full sm:w-64">
+                <label class="block text-xs text-gray-500 mb-1 font-bold">Сортувати за</label>
+                <select id="spec-sort-field" class="mui-input" onchange="renderSpecialtyChoice()">
+                  <option value="number">Номером спеціальності</option>
+                  <option value="salary">Заробітною платою</option>
+                  <option value="emp">% працевлаштування за фахом</option>
+                  <option value="score">Середнім балом</option>
+                </select>
+              </div>
+              <div class="w-full sm:w-56">
+                <label class="block text-xs text-gray-500 mb-1 font-bold">Порядок</label>
+                <select id="spec-sort-dir" class="mui-input" onchange="renderSpecialtyChoice()">
+                  <option value="asc">Зростання</option>
+                  <option value="desc">Спадання</option>
+                </select>
+              </div>
+            </div>
+
             <div id="specialty-choice-container" class="space-y-4"></div>
           </div>
 
@@ -213,4 +233,4 @@
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </body>
-</html>
+</html>Вибір 
