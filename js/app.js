@@ -73,6 +73,12 @@ function initSystem() {
    ВКЛАДКА "ВИБІР СПЕЦІАЛЬНОСТІ"
 ========================================== */
 let specialtyCharts = {};
+let expandedSpecialties = new Set();
+
+function toggleSpecialty(specId) {
+  expandedSpecialties.has(specId) ? expandedSpecialties.delete(specId) : expandedSpecialties.add(specId);
+  renderSpecialtyChoice();
+}
 
 function renderSpecialtyChoice() {
   const container = document.getElementById('specialty-choice-container');
@@ -84,68 +90,81 @@ function renderSpecialtyChoice() {
 
   Object.entries(DB.specialties).forEach(([specId, spec]) => {
     const offers = DB.offers.filter(o => o.spec === specId);
-    if (offers.length === 0) return;
+    const hasData = offers.length > 0;
+    const isExpanded = expandedSpecialties.has(specId);
 
-    const totalApplicants = offers.reduce((sum, o) => sum + o.academic.applicants, 0);
-    const avgMinBudget = offers.reduce((sum, o) => sum + o.academic.minBudget, 0) / offers.length;
-    const avgMinContract = offers.reduce((sum, o) => sum + o.academic.minContract, 0) / offers.length;
-    const avgEmpRate = offers.reduce((sum, o) => sum + o.market.empRate, 0) / offers.length;
-    const avgUnempRate = offers.reduce((sum, o) => sum + o.market.unempRate, 0) / offers.length;
+    const totalApplicants = hasData ? offers.reduce((sum, o) => sum + o.academic.applicants, 0) : 0;
+    const avgMinBudget = hasData ? offers.reduce((sum, o) => sum + o.academic.minBudget, 0) / offers.length : 0;
+    const avgMinContract = hasData ? offers.reduce((sum, o) => sum + o.academic.minContract, 0) / offers.length : 0;
+    const avgEmpRate = hasData ? offers.reduce((sum, o) => sum + o.market.empRate, 0) / offers.length : 0;
+    const avgUnempRate = hasData ? offers.reduce((sum, o) => sum + o.market.unempRate, 0) / offers.length : 0;
 
     const professions = DB.professionStats[specId] || [];
-    if (professions.length) specIdsWithProfessions.push(specId);
+    if (professions.length && isExpanded) specIdsWithProfessions.push(specId);
 
     container.innerHTML += `
       <div class="mui-paper overflow-hidden">
-        <div class="p-5 border-b border-gray-200 bg-gray-50">
-          <div class="text-xs font-bold text-edboPrimary uppercase tracking-wider mb-1">Спеціальність ${specId} | Галузь ${spec.sphere}: ${DB.spheres[spec.sphere]}</div>
-          <h3 class="text-xl font-bold m-0 text-gray-800 mb-2">${spec.name}</h3>
-          <p class="text-sm text-gray-600 m-0 mb-3">${spec.description}</p>
-          <div class="flex flex-wrap gap-2">
-            ${spec.subjects.map(s => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">${s}</span>`).join('')}
+        <div class="p-5 flex justify-between items-center gap-4 accordion-header" onclick="toggleSpecialty('${specId}')">
+          <div>
+            <div class="text-xs font-bold text-edboPrimary uppercase tracking-wider mb-1">Спеціальність ${specId} | Галузь ${spec.sphere}: ${DB.spheres[spec.sphere] || spec.sphere}</div>
+            <h3 class="text-xl font-bold m-0 text-gray-800">${spec.name}</h3>
           </div>
+          <div class="text-edboPrimary text-xl font-bold shrink-0">${isExpanded ? '▾' : '▸'}</div>
         </div>
 
-        <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-gray-100">
-          <div>
-            <div class="text-[10px] text-gray-500 uppercase">Кількість вступників (торік)</div>
-            <div class="font-black text-lg text-gray-800">${totalApplicants.toLocaleString()}</div>
+        <div class="${isExpanded ? '' : 'hidden-block'}">
+          <div class="p-5 border-t border-gray-100 bg-gray-50">
+            <p class="text-sm text-gray-600 m-0 mb-3">${spec.description || 'Опис спеціальності буде додано найближчим часом.'}</p>
+            <div class="flex flex-wrap gap-2">
+              ${(spec.subjects || []).map(s => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">${s}</span>`).join('')}
+            </div>
           </div>
-          <div>
-            <div class="text-[10px] text-gray-500 uppercase">Сер. бал (бюджет / контракт)</div>
-            <div class="font-black text-lg text-edboPrimary">${avgMinBudget.toFixed(1)} / ${avgMinContract.toFixed(1)}</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-gray-500 uppercase">Працевлаштування за фахом</div>
-            <div class="font-black text-lg text-green-700">${Math.round(avgEmpRate)}%</div>
-          </div>
-          <div>
-            <div class="text-[10px] text-gray-500 uppercase">Не знайшли роботу за фахом</div>
-            <div class="font-black text-lg ${avgUnempRate > 10 ? 'text-red-500' : 'text-gray-800'}">${Math.round(avgUnempRate)}%</div>
-          </div>
-        </div>
 
-        <div class="p-5">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-            <div class="text-[10px] font-black text-gray-400 uppercase">Динаміка ринку праці (${DB.professionYears[0]}-${DB.professionYears[DB.professionYears.length - 1]})</div>
+          ${hasData ? `
+          <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-gray-100">
+            <div>
+              <div class="text-[10px] text-gray-500 uppercase">Кількість вступників (торік)</div>
+              <div class="font-black text-lg text-gray-800">${totalApplicants.toLocaleString()}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-gray-500 uppercase">Сер. бал (бюджет / контракт)</div>
+              <div class="font-black text-lg text-edboPrimary">${avgMinBudget.toFixed(1)} / ${avgMinContract.toFixed(1)}</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-gray-500 uppercase">Працевлаштування за фахом</div>
+              <div class="font-black text-lg text-green-700">${Math.round(avgEmpRate)}%</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-gray-500 uppercase">Не знайшли роботу за фахом</div>
+              <div class="font-black text-lg ${avgUnempRate > 10 ? 'text-red-500' : 'text-gray-800'}">${Math.round(avgUnempRate)}%</div>
+            </div>
+          </div>
+
+          <div class="p-5 border-t border-gray-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <div class="text-[10px] font-black text-gray-400 uppercase">Динаміка ринку праці (${DB.professionYears[0]}-${DB.professionYears[DB.professionYears.length - 1]})</div>
+              ${professions.length ? `
+              <select id="prof-select-${specId}" class="mui-input !w-auto !py-1.5 !text-xs" onchange="renderProfessionCharts('${specId}')">
+                ${professions.map((p, i) => `<option value="${i}">${p.name}</option>`).join('')}
+              </select>
+              ` : ''}
+            </div>
             ${professions.length ? `
-            <select id="prof-select-${specId}" class="mui-input !w-auto !py-1.5 !text-xs" onchange="renderProfessionCharts('${specId}')">
-              ${professions.map((p, i) => `<option value="${i}">${p.name}</option>`).join('')}
-            </select>
-            ` : ''}
-          </div>
-          ${professions.length ? `
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div class="border border-gray-100 rounded-lg p-4">
-              <div class="text-xs font-semibold text-gray-600 mb-2">Заробітна плата, ₴</div>
-              <div class="h-[220px]"><canvas id="salary-chart-${specId}"></canvas></div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="border border-gray-100 rounded-lg p-4">
+                <div class="text-xs font-semibold text-gray-600 mb-2">Заробітна плата, ₴</div>
+                <div class="h-[220px]"><canvas id="salary-chart-${specId}"></canvas></div>
+              </div>
+              <div class="border border-gray-100 rounded-lg p-4">
+                <div class="text-xs font-semibold text-gray-600 mb-2">Вакансії та конкуренція</div>
+                <div class="h-[220px]"><canvas id="market-chart-${specId}"></canvas></div>
+              </div>
             </div>
-            <div class="border border-gray-100 rounded-lg p-4">
-              <div class="text-xs font-semibold text-gray-600 mb-2">Вакансії та конкуренція</div>
-              <div class="h-[220px]"><canvas id="market-chart-${specId}"></canvas></div>
-            </div>
+            ` : '<div class="text-sm text-gray-500">Дані по професіях відсутні</div>'}
           </div>
-          ` : '<div class="text-sm text-gray-500">Дані по професіях відсутні</div>'}
+          ` : `
+          <div class="p-5 border-t border-gray-100 text-sm text-gray-500">Дані про конкурс, бали та ринок праці для цієї спеціальності ще не додано.</div>
+          `}
         </div>
       </div>
     `;
