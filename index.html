@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ЄДЕБО | Кабінет вступника 2026</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -84,7 +85,7 @@
       <div class="bg-white px-6 shadow-sm shrink-0 flex overflow-x-auto border-b border-gray-200">
         <button class="tab-btn active" onclick="switchTab('profile')">Мій цифровий профіль</button>
         <button class="tab-btn" onclick="switchTab('specialty-choice')">Вибір спеціальності</button>
-        <button class="tab-btn" onclick="switchTab('analytics')">Пошук та Аналітика</button>
+        <button class="tab-btn" onclick="switchTab('analytics')">Пошук</button>
         <button class="tab-btn" onclick="switchTab('vstup')">Мої заяви (Вступ)</button>
       </div>
 
@@ -135,15 +136,9 @@
             <div id="specialty-choice-container" class="space-y-4"></div>
           </div>
 
-          <!-- ВКЛАДКА 2: АНАЛІТИКА ТА ПОШУК -->
+          <!-- ВКЛАДКА 2: ПОШУК -->
           <div id="tab-analytics" class="tab-content">
-            <div class="flex justify-between items-end mb-4">
-              <h2 class="text-2xl font-bold text-edboPrimary m-0">Аналітика та вибір спеціальності</h2>
-              <label class="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded border border-gray-300 shadow-sm hover:bg-gray-50">
-                <input type="checkbox" id="mode-view" onchange="renderAnalytics()">
-                <span class="text-sm font-bold text-gray-800">Режим огляду (без результатів НМТ)</span>
-              </label>
-            </div>
+            <h2 class="text-2xl font-bold text-edboPrimary mb-4 m-0">Пошук пропозицій</h2>
 
             <!-- Фільтри -->
             <div class="mui-paper p-5 mb-6 bg-gray-50">
@@ -166,8 +161,6 @@
                     <option value="budgetAsc">Мін. бал Бюджет (зростання)</option>
                     <option value="budgetDesc">Мін. бал Бюджет (спадання)</option>
                     <option value="contractAsc">Мін. бал Контракт (зростання)</option>
-                    <option value="salaryDesc">Середня ЗП (спадання)</option>
-                    <option value="empDesc">Рівень працевлаштування (спадання)</option>
                   </select>
                 </div>
               </div>

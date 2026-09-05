@@ -72,9 +72,15 @@ function initSystem() {
 /* ==========================================
    ВКЛАДКА "ВИБІР СПЕЦІАЛЬНОСТІ"
 ========================================== */
+let specialtyCharts = [];
+
 function renderSpecialtyChoice() {
   const container = document.getElementById('specialty-choice-container');
   container.innerHTML = '';
+  specialtyCharts.forEach(c => c.destroy());
+  specialtyCharts = [];
+
+  const pendingCharts = [];
 
   Object.entries(DB.specialties).forEach(([specId, spec]) => {
     const offers = DB.offers.filter(o => o.spec === specId);
@@ -88,20 +94,26 @@ function renderSpecialtyChoice() {
 
     const professions = DB.professionStats[specId] || [];
 
-    let professionsHtml = professions.map(p => `
-      <tr class="border-b border-gray-100 last:border-none">
-        <td class="py-2 pr-3 font-semibold text-gray-800">${p.name}</td>
-        <td class="py-2 pr-3 text-center">${p.vacancies.toLocaleString()}</td>
-        <td class="py-2 pr-3 text-center">${p.candidatesPerVacancy}</td>
-        <td class="py-2 text-right font-bold text-edboPrimary">${p.salary.toLocaleString()} ₴</td>
-      </tr>
-    `).join('');
+    let professionsHtml = professions.map((p, i) => {
+      const canvasId = `prof-chart-${specId}-${i}`;
+      pendingCharts.push({ canvasId, profession: p });
+      return `
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-semibold text-gray-800 text-sm mb-2">${p.name}</div>
+          <div class="h-[180px]"><canvas id="${canvasId}"></canvas></div>
+        </div>
+      `;
+    }).join('');
 
     container.innerHTML += `
       <div class="mui-paper overflow-hidden">
         <div class="p-5 border-b border-gray-200 bg-gray-50">
           <div class="text-xs font-bold text-edboPrimary uppercase tracking-wider mb-1">Спеціальність ${specId} | Галузь ${spec.sphere}: ${DB.spheres[spec.sphere]}</div>
-          <h3 class="text-xl font-bold m-0 text-gray-800">${spec.name}</h3>
+          <h3 class="text-xl font-bold m-0 text-gray-800 mb-2">${spec.name}</h3>
+          <p class="text-sm text-gray-600 m-0 mb-3">${spec.description}</p>
+          <div class="flex flex-wrap gap-2">
+            ${spec.subjects.map(s => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">${s}</span>`).join('')}
+          </div>
         </div>
 
         <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-gray-100">
@@ -124,25 +136,66 @@ function renderSpecialtyChoice() {
         </div>
 
         <div class="p-5">
-          <div class="text-[10px] font-black text-gray-400 uppercase mb-3">Можливі професії та статистика ринку праці</div>
+          <div class="text-[10px] font-black text-gray-400 uppercase mb-3">Динаміка ринку праці по професіях (${DB.professionYears[0]}-${DB.professionYears[DB.professionYears.length - 1]})</div>
           ${professions.length ? `
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="text-[10px] text-gray-500 uppercase border-b border-gray-200">
-                  <th class="text-left py-2 pr-3 font-bold">Професія</th>
-                  <th class="text-center py-2 pr-3 font-bold">Кількість вакансій</th>
-                  <th class="text-center py-2 pr-3 font-bold">Сер. к-сть кандидатів / вакансію</th>
-                  <th class="text-right py-2 font-bold">Сер. заробітна плата</th>
-                </tr>
-              </thead>
-              <tbody>${professionsHtml}</tbody>
-            </table>
-          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">${professionsHtml}</div>
           ` : '<div class="text-sm text-gray-500">Дані по професіях відсутні</div>'}
         </div>
       </div>
     `;
+  });
+
+  pendingCharts.forEach(({ canvasId, profession }) => {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: DB.professionYears,
+        datasets: [
+          {
+            label: 'Зарплата (₴)',
+            data: profession.history.map(h => h.salary),
+            borderColor: '#011D63',
+            backgroundColor: '#011D63',
+            yAxisID: 'y',
+            tension: 0.3
+          },
+          {
+            label: 'Вакансії',
+            data: profession.history.map(h => h.vacancies),
+            borderColor: '#2785FF',
+            backgroundColor: '#2785FF',
+            yAxisID: 'y1',
+            tension: 0.3
+          },
+          {
+            label: 'Кандидатів/вакансію',
+            data: profession.history.map(h => h.candidatesPerVacancy),
+            borderColor: '#137333',
+            backgroundColor: '#137333',
+            yAxisID: 'y2',
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+        },
+        scales: {
+          y: { position: 'left', title: { display: true, text: '₴', font: { size: 10 } }, ticks: { font: { size: 9 } } },
+          y1: { position: 'right', title: { display: true, text: 'Вакансії', font: { size: 10 } }, grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } },
+          y2: { display: false }
+        }
+      }
+    });
+
+    specialtyCharts.push(chart);
   });
 }
 
@@ -187,8 +240,6 @@ function renderAnalytics() {
     if(sort === 'budgetAsc') return a.academic.minBudget - b.academic.minBudget;
     if(sort === 'budgetDesc') return b.academic.minBudget - a.academic.minBudget;
     if(sort === 'contractAsc') return a.academic.minContract - b.academic.minContract;
-    if(sort === 'salaryDesc') return b.market.salary - a.market.salary;
-    if(sort === 'empDesc') return b.market.empRate - a.market.empRate;
     return 0;
   });
 
@@ -212,7 +263,6 @@ function renderAnalytics() {
 function renderHTML() {
   const container = document.getElementById('analytics-container');
   container.innerHTML = '';
-  const isViewMode = document.getElementById('mode-view').checked;
 
   if(Object.keys(currentRenderData).length === 0) {
     container.innerHTML = '<div class="mui-paper p-8 text-center text-gray-500 font-bold">Нічого не знайдено за вашими критеріями</div>';
@@ -220,26 +270,12 @@ function renderHTML() {
   }
 
   Object.values(currentRenderData).forEach(sphere => {
-    // Агрегація для сфери
-    const avgSal = sphere.allOffers.reduce((sum, o) => sum + o.market.salary, 0) / sphere.allOffers.length;
-    const avgEmp = sphere.allOffers.reduce((sum, o) => sum + o.market.empRate, 0) / sphere.allOffers.length;
-
     let html = `
       <div class="mui-paper overflow-hidden p-0 mb-4 border border-gray-300">
-        <div class="accordion-header p-4 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gray-50 border-b border-gray-200" onclick="toggleSphere('${sphere.id}')">
+        <div class="accordion-header p-4 flex justify-between items-center gap-4 bg-gray-50 border-b border-gray-200" onclick="toggleSphere('${sphere.id}')">
           <div>
             <div class="text-xs font-bold text-edboPrimary uppercase tracking-wider mb-1">Сфера / Галузь знань ${sphere.id}</div>
             <h3 class="text-xl font-bold m-0 text-gray-800">${sphere.name}</h3>
-          </div>
-          <div class="flex gap-4">
-            <div class="text-right">
-              <div class="text-[10px] text-gray-500 uppercase">Сер. Зарплата (ПФУ)</div>
-              <div class="font-black text-lg text-edboPrimary">${Math.round(avgSal).toLocaleString()} ₴</div>
-            </div>
-            <div class="text-right border-l pl-4">
-              <div class="text-[10px] text-gray-500 uppercase">Працевлашт. (ПФУ)</div>
-              <div class="font-black text-lg text-green-700">${Math.round(avgEmp)}%</div>
-            </div>
           </div>
         </div>
 
@@ -264,53 +300,31 @@ function renderHTML() {
 
         // Логіка кнопки "Подати заяву"
         let btnHtml = '';
-        if (isViewMode) {
-          btnHtml = `<button class="mui-btn mui-btn-primary" disabled>Подати заяву</button><div class="text-[10px] text-gray-500 mt-1">Режим огляду</div>`;
+        if (USER_SCORE >= offer.academic.minBudget) {
+          btnHtml = `<button class="mui-btn bg-green-600 hover:bg-green-700 text-white" onclick="apply('${offer.id}')">Подати на БЮДЖЕТ</button><div class="text-[10px] text-green-700 mt-1 font-bold">Ваш бал (${USER_SCORE}) проходить!</div>`;
+        } else if (USER_SCORE >= offer.academic.minContract) {
+          btnHtml = `<button class="mui-btn bg-yellow-500 hover:bg-yellow-600 text-white" onclick="apply('${offer.id}')">Подати на КОНТРАКТ</button><div class="text-[10px] text-gray-500 mt-1">Бракує балів на бюджет</div>`;
         } else {
-          if (USER_SCORE >= offer.academic.minBudget) {
-            btnHtml = `<button class="mui-btn bg-green-600 hover:bg-green-700 text-white" onclick="apply('${offer.id}')">Подати на БЮДЖЕТ</button><div class="text-[10px] text-green-700 mt-1 font-bold">Ваш бал (${USER_SCORE}) проходить!</div>`;
-          } else if (USER_SCORE >= offer.academic.minContract) {
-            btnHtml = `<button class="mui-btn bg-yellow-500 hover:bg-yellow-600 text-white" onclick="apply('${offer.id}')">Подати на КОНТРАКТ</button><div class="text-[10px] text-gray-500 mt-1">Бракує балів на бюджет</div>`;
-          } else {
-            btnHtml = `<button class="mui-btn" disabled>Недостатньо балів</button>`;
-          }
+          btnHtml = `<button class="mui-btn" disabled>Недостатньо балів</button>`;
         }
 
         html += `
-            <div class="border border-gray-200 rounded-lg p-0 flex flex-col xl:flex-row overflow-hidden shadow-sm">
-              <!-- Інформація про Універ -->
-              <div class="flex-1 p-5">
+            <div class="border border-gray-200 rounded-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
+              <div class="flex-1">
                 <div class="text-xs text-gray-500 mb-1">${uni.region} | ${uni.type} | ${uni.accred}</div>
                 <h4 class="font-black text-xl text-edboPrimary m-0 mb-3">${uni.name}</h4>
                 <div class="text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded border border-gray-100">
                   <b>Силабус програми:</b> ${offer.academic.syllabus}
                 </div>
-                <div class="flex gap-2 text-xs font-bold">
+                <div class="flex gap-2 text-xs font-bold flex-wrap">
                   <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Бюджет: ${offer.academic.budgetPlaces} місць (від ${offer.academic.minBudget} б.)</span>
                   <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Контракт: ${offer.academic.price.toLocaleString()} ₴/рік (від ${offer.academic.minContract} б.)</span>
                   <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded">Конкурс торік: ${offer.academic.applicants} заяв</span>
                 </div>
               </div>
 
-              <!-- Аналітика ПФУ -->
-              <div class="w-full xl:w-[320px] bg-gray-50 border-l border-gray-200 p-5 flex flex-col justify-between shrink-0">
-                <div>
-                  <div class="text-[10px] font-black text-gray-400 uppercase mb-3 border-b pb-1 flex justify-between">
-                    <span>Статистика випускників</span>
-                    <span class="text-edboPrimary">Дані ПФУ та ДЦЗ</span>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3 mb-4">
-                    <div><div class="text-[10px] text-gray-500">Середня ЗП</div><div class="font-black text-edboPrimary text-lg">${offer.market.salary.toLocaleString()} ₴</div></div>
-                    <div><div class="text-[10px] text-gray-500">Вакансії в Україні</div><div class="font-black text-gray-800 text-lg">${offer.market.vacancies}</div></div>
-                    <div><div class="text-[10px] text-gray-500">Працюють за фахом</div><div class="font-black text-green-600 text-lg">${offer.market.empRate}%</div></div>
-                    <div><div class="text-[10px] text-gray-500">Не працевлаштовано</div><div class="font-black ${offer.market.unempRate > 10 ? 'text-red-500' : 'text-gray-800'} text-lg">${offer.market.unempRate}%</div></div>
-                  </div>
-                  <div class="text-[10px] text-gray-500 mb-1">Популярні посади:</div>
-                  <div class="text-xs font-bold text-gray-700">${offer.market.jobs.join(', ')}</div>
-                </div>
-                <div class="mt-5 text-center">
-                  ${btnHtml}
-                </div>
+              <div class="shrink-0 text-center">
+                ${btnHtml}
               </div>
             </div>
         `;

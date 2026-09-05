@@ -21,43 +21,188 @@ const DB = {
   },
 
   specialties: {
-    "121": { name: "Інженерія програмного забезпечення", sphere: "12" },
-    "122": { name: "Комп'ютерні науки", sphere: "12" },
-    "124": { name: "Системний аналіз", sphere: "12" },
-    "081": { name: "Право", sphere: "08" },
-    "053": { name: "Психологія", sphere: "05" }
+    "121": {
+      name: "Інженерія програмного забезпечення",
+      sphere: "12",
+      description: "Підготовка фахівців з проєктування, розробки та супроводу програмних систем і застосунків.",
+      subjects: ["Алгоритми та структури даних", "Об'єктно-орієнтоване програмування", "Веб-розробка", "Проєктування ПЗ", "Бази даних"]
+    },
+    "122": {
+      name: "Комп'ютерні науки",
+      sphere: "12",
+      description: "Фундаментальна підготовка з інформатики, аналізу даних та розробки програмного забезпечення.",
+      subjects: ["Дискретна математика", "Алгоритми та структури даних", "Штучний інтелект", "Комп'ютерні мережі", "Хмарні технології"]
+    },
+    "124": {
+      name: "Системний аналіз",
+      sphere: "12",
+      description: "Підготовка фахівців з моделювання складних систем, аналізу даних і підтримки прийняття рішень.",
+      subjects: ["Вища математика", "Системний аналіз", "Моделювання систем", "Python/R", "Нейромережі"]
+    },
+    "081": {
+      name: "Право",
+      sphere: "08",
+      description: "Підготовка юристів для роботи в державних органах, бізнесі та правозахисній сфері.",
+      subjects: ["Цивільне право", "Кримінальне право", "Конституційне право", "Адміністративне право", "Міжнародне право"]
+    },
+    "053": {
+      name: "Психологія",
+      sphere: "05",
+      description: "Підготовка фахівців з дослідження психіки людини, діагностики та психологічного консультування.",
+      subjects: ["Загальна психологія", "Психодіагностика", "Вікова психологія", "Консультування", "Соціальна психологія"]
+    }
   },
 
-  // Статистика ринку праці по конкретних професіях у межах спеціальності
+  // Динаміка ринку праці по конкретних професіях у межах спеціальності (2021-2025)
+  professionYears: [2021, 2022, 2023, 2024, 2025],
+
+  // Динаміка відображає реальний контекст ринку: спад 2022 р. (початок повномасштабної
+  // війни) по-різному вплинув на галузі — ІТ швидко відновилося за рахунок іноземних
+  // замовлень, юриспруденція просіла через призупинення судів і нотаріату,
+  // а попит на психологів навпаки різко зріс.
   professionStats: {
     "121": [
-      { name: "Backend-розробник", vacancies: 2600, candidatesPerVacancy: 6, salary: 48000 },
-      { name: "Frontend-розробник", vacancies: 2100, candidatesPerVacancy: 9, salary: 42000 },
-      { name: "Мобільний розробник", vacancies: 900, candidatesPerVacancy: 7, salary: 44000 },
-      { name: "QA-інженер", vacancies: 1200, candidatesPerVacancy: 5, salary: 32000 }
+      { name: "Backend-розробник", history: [
+        { vacancies: 2200, candidatesPerVacancy: 7, salary: 32000 },
+        { vacancies: 1900, candidatesPerVacancy: 9, salary: 33000 },
+        { vacancies: 2300, candidatesPerVacancy: 7, salary: 39000 },
+        { vacancies: 2500, candidatesPerVacancy: 6, salary: 44000 },
+        { vacancies: 2600, candidatesPerVacancy: 6, salary: 48000 }
+      ] },
+      { name: "Frontend-розробник", history: [
+        { vacancies: 1800, candidatesPerVacancy: 10, salary: 28000 },
+        { vacancies: 1500, candidatesPerVacancy: 13, salary: 29000 },
+        { vacancies: 1750, candidatesPerVacancy: 11, salary: 34000 },
+        { vacancies: 1950, candidatesPerVacancy: 10, salary: 38000 },
+        { vacancies: 2100, candidatesPerVacancy: 9, salary: 42000 }
+      ] },
+      { name: "Мобільний розробник", history: [
+        { vacancies: 750, candidatesPerVacancy: 8, salary: 30000 },
+        { vacancies: 600, candidatesPerVacancy: 10, salary: 31000 },
+        { vacancies: 720, candidatesPerVacancy: 8, salary: 36000 },
+        { vacancies: 820, candidatesPerVacancy: 7, salary: 40000 },
+        { vacancies: 900, candidatesPerVacancy: 7, salary: 44000 }
+      ] },
+      { name: "QA-інженер", history: [
+        { vacancies: 1000, candidatesPerVacancy: 6, salary: 22000 },
+        { vacancies: 850, candidatesPerVacancy: 8, salary: 23000 },
+        { vacancies: 1000, candidatesPerVacancy: 6, salary: 27000 },
+        { vacancies: 1100, candidatesPerVacancy: 5, salary: 30000 },
+        { vacancies: 1200, candidatesPerVacancy: 5, salary: 32000 }
+      ] }
     ],
     "122": [
-      { name: "Software Engineer", vacancies: 4500, candidatesPerVacancy: 8, salary: 45000 },
-      { name: "Game Developer", vacancies: 700, candidatesPerVacancy: 11, salary: 38000 },
-      { name: "Backend Developer", vacancies: 3200, candidatesPerVacancy: 6, salary: 40000 },
-      { name: "DevOps-інженер", vacancies: 1400, candidatesPerVacancy: 4, salary: 55000 }
+      { name: "Software Engineer", history: [
+        { vacancies: 3800, candidatesPerVacancy: 9, salary: 31000 },
+        { vacancies: 3300, candidatesPerVacancy: 12, salary: 32000 },
+        { vacancies: 3900, candidatesPerVacancy: 9, salary: 38000 },
+        { vacancies: 4200, candidatesPerVacancy: 8, salary: 42000 },
+        { vacancies: 4500, candidatesPerVacancy: 8, salary: 45000 }
+      ] },
+      { name: "Game Developer", history: [
+        { vacancies: 600, candidatesPerVacancy: 12, salary: 25000 },
+        { vacancies: 420, candidatesPerVacancy: 17, salary: 24000 },
+        { vacancies: 520, candidatesPerVacancy: 14, salary: 29000 },
+        { vacancies: 620, candidatesPerVacancy: 12, salary: 34000 },
+        { vacancies: 700, candidatesPerVacancy: 11, salary: 38000 }
+      ] },
+      { name: "Backend Developer", history: [
+        { vacancies: 2700, candidatesPerVacancy: 8, salary: 27000 },
+        { vacancies: 2300, candidatesPerVacancy: 10, salary: 28000 },
+        { vacancies: 2800, candidatesPerVacancy: 7, salary: 33000 },
+        { vacancies: 3000, candidatesPerVacancy: 6, salary: 37000 },
+        { vacancies: 3200, candidatesPerVacancy: 6, salary: 40000 }
+      ] },
+      { name: "DevOps-інженер", history: [
+        { vacancies: 1100, candidatesPerVacancy: 5, salary: 37000 },
+        { vacancies: 950, candidatesPerVacancy: 6, salary: 39000 },
+        { vacancies: 1150, candidatesPerVacancy: 5, salary: 46000 },
+        { vacancies: 1300, candidatesPerVacancy: 4, salary: 51000 },
+        { vacancies: 1400, candidatesPerVacancy: 4, salary: 55000 }
+      ] }
     ],
     "124": [
-      { name: "Data Scientist", vacancies: 1200, candidatesPerVacancy: 10, salary: 55000 },
-      { name: "System Architect", vacancies: 500, candidatesPerVacancy: 5, salary: 60000 },
-      { name: "Data Analyst", vacancies: 1500, candidatesPerVacancy: 7, salary: 30000 },
-      { name: "Business Analyst", vacancies: 900, candidatesPerVacancy: 8, salary: 34000 }
+      { name: "Data Scientist", history: [
+        { vacancies: 900, candidatesPerVacancy: 12, salary: 35000 },
+        { vacancies: 750, candidatesPerVacancy: 15, salary: 37000 },
+        { vacancies: 950, candidatesPerVacancy: 12, salary: 44000 },
+        { vacancies: 1080, candidatesPerVacancy: 11, salary: 50000 },
+        { vacancies: 1200, candidatesPerVacancy: 10, salary: 55000 }
+      ] },
+      { name: "System Architect", history: [
+        { vacancies: 400, candidatesPerVacancy: 6, salary: 41000 },
+        { vacancies: 340, candidatesPerVacancy: 8, salary: 43000 },
+        { vacancies: 420, candidatesPerVacancy: 6, salary: 50000 },
+        { vacancies: 460, candidatesPerVacancy: 5, salary: 55000 },
+        { vacancies: 500, candidatesPerVacancy: 5, salary: 60000 }
+      ] },
+      { name: "Data Analyst", history: [
+        { vacancies: 1150, candidatesPerVacancy: 8, salary: 20000 },
+        { vacancies: 980, candidatesPerVacancy: 10, salary: 21000 },
+        { vacancies: 1200, candidatesPerVacancy: 8, salary: 25000 },
+        { vacancies: 1350, candidatesPerVacancy: 7, salary: 28000 },
+        { vacancies: 1500, candidatesPerVacancy: 7, salary: 30000 }
+      ] },
+      { name: "Business Analyst", history: [
+        { vacancies: 700, candidatesPerVacancy: 9, salary: 23000 },
+        { vacancies: 560, candidatesPerVacancy: 12, salary: 24000 },
+        { vacancies: 700, candidatesPerVacancy: 9, salary: 28000 },
+        { vacancies: 800, candidatesPerVacancy: 8, salary: 31000 },
+        { vacancies: 900, candidatesPerVacancy: 8, salary: 34000 }
+      ] }
     ],
     "081": [
-      { name: "Юрисконсульт", vacancies: 950, candidatesPerVacancy: 12, salary: 25000 },
-      { name: "Адвокат", vacancies: 400, candidatesPerVacancy: 15, salary: 35000 },
-      { name: "Нотаріус", vacancies: 120, candidatesPerVacancy: 20, salary: 40000 },
-      { name: "Помічник судді", vacancies: 300, candidatesPerVacancy: 18, salary: 20000 }
+      { name: "Юрисконсульт", history: [
+        { vacancies: 1050, candidatesPerVacancy: 11, salary: 17000 },
+        { vacancies: 650, candidatesPerVacancy: 18, salary: 16500 },
+        { vacancies: 750, candidatesPerVacancy: 15, salary: 19000 },
+        { vacancies: 850, candidatesPerVacancy: 13, salary: 22000 },
+        { vacancies: 950, candidatesPerVacancy: 12, salary: 25000 }
+      ] },
+      { name: "Адвокат", history: [
+        { vacancies: 450, candidatesPerVacancy: 13, salary: 29000 },
+        { vacancies: 280, candidatesPerVacancy: 21, salary: 27000 },
+        { vacancies: 330, candidatesPerVacancy: 18, salary: 30000 },
+        { vacancies: 370, candidatesPerVacancy: 16, salary: 33000 },
+        { vacancies: 400, candidatesPerVacancy: 15, salary: 35000 }
+      ] },
+      { name: "Нотаріус", history: [
+        { vacancies: 140, candidatesPerVacancy: 17, salary: 34000 },
+        { vacancies: 70, candidatesPerVacancy: 28, salary: 32000 },
+        { vacancies: 90, candidatesPerVacancy: 24, salary: 35000 },
+        { vacancies: 105, candidatesPerVacancy: 22, salary: 38000 },
+        { vacancies: 120, candidatesPerVacancy: 20, salary: 40000 }
+      ] },
+      { name: "Помічник судді", history: [
+        { vacancies: 340, candidatesPerVacancy: 15, salary: 16000 },
+        { vacancies: 190, candidatesPerVacancy: 24, salary: 15500 },
+        { vacancies: 230, candidatesPerVacancy: 21, salary: 17000 },
+        { vacancies: 270, candidatesPerVacancy: 19, salary: 18500 },
+        { vacancies: 300, candidatesPerVacancy: 18, salary: 20000 }
+      ] }
     ],
     "053": [
-      { name: "Клінічний психолог", vacancies: 700, candidatesPerVacancy: 6, salary: 24000 },
-      { name: "HR-менеджер", vacancies: 1600, candidatesPerVacancy: 9, salary: 26000 },
-      { name: "Шкільний психолог", vacancies: 500, candidatesPerVacancy: 4, salary: 16000 }
+      { name: "Клінічний психолог", history: [
+        { vacancies: 420, candidatesPerVacancy: 8, salary: 15000 },
+        { vacancies: 600, candidatesPerVacancy: 6, salary: 18000 },
+        { vacancies: 650, candidatesPerVacancy: 6, salary: 21000 },
+        { vacancies: 680, candidatesPerVacancy: 6, salary: 23000 },
+        { vacancies: 700, candidatesPerVacancy: 6, salary: 24000 }
+      ] },
+      { name: "HR-менеджер", history: [
+        { vacancies: 1400, candidatesPerVacancy: 10, salary: 18000 },
+        { vacancies: 900, candidatesPerVacancy: 15, salary: 17000 },
+        { vacancies: 1250, candidatesPerVacancy: 11, salary: 21000 },
+        { vacancies: 1450, candidatesPerVacancy: 10, salary: 24000 },
+        { vacancies: 1600, candidatesPerVacancy: 9, salary: 26000 }
+      ] },
+      { name: "Шкільний психолог", history: [
+        { vacancies: 380, candidatesPerVacancy: 5, salary: 11000 },
+        { vacancies: 460, candidatesPerVacancy: 4, salary: 12000 },
+        { vacancies: 480, candidatesPerVacancy: 4, salary: 13500 },
+        { vacancies: 490, candidatesPerVacancy: 4, salary: 15000 },
+        { vacancies: 500, candidatesPerVacancy: 4, salary: 16000 }
+      ] }
     ]
   },
 
