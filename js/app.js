@@ -72,15 +72,15 @@ function initSystem() {
 /* ==========================================
    ВКЛАДКА "ВИБІР СПЕЦІАЛЬНОСТІ"
 ========================================== */
-let specialtyCharts = [];
+let specialtyCharts = {};
 
 function renderSpecialtyChoice() {
   const container = document.getElementById('specialty-choice-container');
   container.innerHTML = '';
-  specialtyCharts.forEach(c => c.destroy());
-  specialtyCharts = [];
+  Object.values(specialtyCharts).forEach(c => c.destroy());
+  specialtyCharts = {};
 
-  const pendingCharts = [];
+  const specIdsWithProfessions = [];
 
   Object.entries(DB.specialties).forEach(([specId, spec]) => {
     const offers = DB.offers.filter(o => o.spec === specId);
@@ -93,17 +93,7 @@ function renderSpecialtyChoice() {
     const avgUnempRate = offers.reduce((sum, o) => sum + o.market.unempRate, 0) / offers.length;
 
     const professions = DB.professionStats[specId] || [];
-
-    let professionsHtml = professions.map((p, i) => {
-      const canvasId = `prof-chart-${specId}-${i}`;
-      pendingCharts.push({ canvasId, profession: p });
-      return `
-        <div class="border border-gray-100 rounded-lg p-4">
-          <div class="font-semibold text-gray-800 text-sm mb-2">${p.name}</div>
-          <div class="h-[180px]"><canvas id="${canvasId}"></canvas></div>
-        </div>
-      `;
-    }).join('');
+    if (professions.length) specIdsWithProfessions.push(specId);
 
     container.innerHTML += `
       <div class="mui-paper overflow-hidden">
@@ -136,38 +126,90 @@ function renderSpecialtyChoice() {
         </div>
 
         <div class="p-5">
-          <div class="text-[10px] font-black text-gray-400 uppercase mb-3">Динаміка ринку праці по професіях (${DB.professionYears[0]}-${DB.professionYears[DB.professionYears.length - 1]})</div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+            <div class="text-[10px] font-black text-gray-400 uppercase">Динаміка ринку праці (${DB.professionYears[0]}-${DB.professionYears[DB.professionYears.length - 1]})</div>
+            ${professions.length ? `
+            <select id="prof-select-${specId}" class="mui-input !w-auto !py-1.5 !text-xs" onchange="renderProfessionCharts('${specId}')">
+              ${professions.map((p, i) => `<option value="${i}">${p.name}</option>`).join('')}
+            </select>
+            ` : ''}
+          </div>
           ${professions.length ? `
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">${professionsHtml}</div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="border border-gray-100 rounded-lg p-4">
+              <div class="text-xs font-semibold text-gray-600 mb-2">Заробітна плата, ₴</div>
+              <div class="h-[220px]"><canvas id="salary-chart-${specId}"></canvas></div>
+            </div>
+            <div class="border border-gray-100 rounded-lg p-4">
+              <div class="text-xs font-semibold text-gray-600 mb-2">Вакансії та конкуренція</div>
+              <div class="h-[220px]"><canvas id="market-chart-${specId}"></canvas></div>
+            </div>
+          </div>
           ` : '<div class="text-sm text-gray-500">Дані по професіях відсутні</div>'}
         </div>
       </div>
     `;
   });
 
-  pendingCharts.forEach(({ canvasId, profession }) => {
-    const ctx = document.getElementById(canvasId);
-    if (!ctx) return;
+  specIdsWithProfessions.forEach(specId => renderProfessionCharts(specId));
+}
 
-    const chart = new Chart(ctx, {
+function renderProfessionCharts(specId) {
+  const professions = DB.professionStats[specId] || [];
+  if (!professions.length) return;
+
+  const select = document.getElementById(`prof-select-${specId}`);
+  const idx = select ? parseInt(select.value, 10) : 0;
+  const profession = professions[idx] || professions[0];
+
+  ['salary', 'market'].forEach(key => {
+    const chartKey = `${key}-${specId}`;
+    if (specialtyCharts[chartKey]) {
+      specialtyCharts[chartKey].destroy();
+      delete specialtyCharts[chartKey];
+    }
+  });
+
+  const salaryCtx = document.getElementById(`salary-chart-${specId}`);
+  if (salaryCtx) {
+    specialtyCharts[`salary-${specId}`] = new Chart(salaryCtx, {
+      type: 'line',
+      data: {
+        labels: DB.professionYears,
+        datasets: [{
+          label: 'Зарплата (₴)',
+          data: profession.history.map(h => h.salary),
+          borderColor: '#011D63',
+          backgroundColor: 'rgba(1, 29, 99, 0.1)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { ticks: { font: { size: 9 } } },
+          x: { ticks: { font: { size: 9 } } }
+        }
+      }
+    });
+  }
+
+  const marketCtx = document.getElementById(`market-chart-${specId}`);
+  if (marketCtx) {
+    specialtyCharts[`market-${specId}`] = new Chart(marketCtx, {
       type: 'line',
       data: {
         labels: DB.professionYears,
         datasets: [
           {
-            label: 'Зарплата (₴)',
-            data: profession.history.map(h => h.salary),
-            borderColor: '#011D63',
-            backgroundColor: '#011D63',
-            yAxisID: 'y',
-            tension: 0.3
-          },
-          {
             label: 'Вакансії',
             data: profession.history.map(h => h.vacancies),
             borderColor: '#2785FF',
             backgroundColor: '#2785FF',
-            yAxisID: 'y1',
+            yAxisID: 'y',
             tension: 0.3
           },
           {
@@ -175,7 +217,7 @@ function renderSpecialtyChoice() {
             data: profession.history.map(h => h.candidatesPerVacancy),
             borderColor: '#137333',
             backgroundColor: '#137333',
-            yAxisID: 'y2',
+            yAxisID: 'y1',
             tension: 0.3
           }
         ]
@@ -188,15 +230,12 @@ function renderSpecialtyChoice() {
           legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
         },
         scales: {
-          y: { position: 'left', title: { display: true, text: '₴', font: { size: 10 } }, ticks: { font: { size: 9 } } },
-          y1: { position: 'right', title: { display: true, text: 'Вакансії', font: { size: 10 } }, grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } },
-          y2: { display: false }
+          y: { position: 'left', title: { display: true, text: 'Вакансії', font: { size: 10 } }, ticks: { font: { size: 9 } } },
+          y1: { position: 'right', title: { display: true, text: 'Кандидатів/вакансію', font: { size: 10 } }, grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } }
         }
       }
     });
-
-    specialtyCharts.push(chart);
-  });
+  }
 }
 
 function updateFilters() {
